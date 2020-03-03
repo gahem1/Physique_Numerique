@@ -58,9 +58,14 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="414" y="175" width="1092" height="707" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1583189132844" />
-    <state x="461" y="163" key="SettingsEditor" timestamp="1583189457133">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="288" y="0" key="SettingsEditor" timestamp="1583190470942">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
+    <state x="288" y="0" key="SettingsEditor/0.0.1280.680@0.0.1280.680" timestamp="1583190470942" />
     <state x="461" y="163" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1583189457133" />
+    <state x="349" y="170" key="com.intellij.ide.util.TipDialog" timestamp="1583190509802">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="349" y="170" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1583190509802" />
   </component>
 </project>
