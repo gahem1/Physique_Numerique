@@ -1,0 +1,2 @@
+import puits_potentiel_intro
+
