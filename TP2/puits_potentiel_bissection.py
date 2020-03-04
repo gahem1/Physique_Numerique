@@ -1,7 +1,7 @@
 import puits_potentiel_intro as puits
 
 
-def transcendental_equation(energy, evenness):
+def transcendental_equation(energy, evenness: str):
     return puits.LHS(energy) - puits.RHS(puits.roots(energy), evenness)
 
 
