@@ -7,7 +7,7 @@ def roots(energy):
     return np.sqrt((height - energy) / energy)
 
 
-def right_hand_side(root, parity):
+def right_hand_side(root, parity: str):
     if parity == 'even':
         return root
     elif parity == 'odd':
