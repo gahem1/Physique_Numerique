@@ -1,4 +1,4 @@
-import puits_potentiel_intro as puits
+import puits_potentiel_intro_Gabriel_Meriem as puits
 
 
 def transcendental_equation(energy, evenness: str):
