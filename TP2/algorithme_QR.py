@@ -20,7 +20,8 @@ def algo_qr(input_matrix: np.ndarray):
         quit()
 
 
+B = np.array([[1, 4, 8, 4], [4, 2, 3, 7], [8, 3, 6, 9], [4, 7, 9, 2]])
+
 if __name__ == "__main__":
-    B = np.array([[1, 4, 8, 4], [4, 2, 3, 7], [8, 3, 6, 9], [4, 7, 9, 2]])
     Q, R = algo_qr(B)
     print(Q @ R)
