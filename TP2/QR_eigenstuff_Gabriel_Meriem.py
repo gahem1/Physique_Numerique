@@ -1,5 +1,5 @@
 import numpy as np
-from algorithme_QR import algo_qr, B
+from algorithme_QR_Gabriel_Meriem import algo_qr, B
 from time import time
 
 

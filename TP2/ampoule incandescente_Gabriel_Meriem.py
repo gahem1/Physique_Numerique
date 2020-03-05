@@ -1,4 +1,4 @@
-from gaussxw import gaussxw, gaussxwab
+from gaussxw_Gabriel_Meriem import gaussxw, gaussxwab
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.constants as scte
