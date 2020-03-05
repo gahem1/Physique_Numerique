@@ -12,34 +12,15 @@ def efficacite(T):
     a = scte.h * scte.c / (750 * 10 ** -9 * scte.k * T)
     b = scte.h * scte.c / (390 * 10 ** -9 * scte.k * T)
     N = 100
-    # Calculate the sample points and weights, then map them
-    # to the required integration domain
+    # Calculate the sample points and weights
     x, w = gaussxw(N)
-    xp = 0.5 * (b - a) * x + 0.5 * (b + a)
-    wp = 0.5 * (b - a) * w
-
+    xp = (b - a) / 2 * x + (b + a) / 2
+    wp = (b - a) * w / 2
     # Perform the integration
     s = 0.0
-    for k in range(N):
-        s += wp[k] * f(xp[k])
+    for i in range(N):
+        s += wp[i] * f(xp[i])
     return 15 * s / np.pi ** 4
-
-
-def efficaciter(T):
-    a = scte.h * scte.c / (750 * 10 ** -9 * scte.k * T)
-    b = scte.h * scte.c / (390 * 10 ** -9 * scte.k * T)
-    N = 100
-    # Calculate the sample points and weights, then map them
-    # to the required integration domain
-    x, w = gaussxw(N)
-    xp = 0.5 * (b - a) * x + 0.5 * (b + a)
-    wp = 0.5 * (b - a) * w
-
-    # Perform the integration
-    s = 0.0
-    for k in range(N):
-        s += wp[k] * f(xp[k])
-    return np.pi ** 4 / (15 * s)
 
 
 T = np.linspace(300, 10000, num=100)
@@ -68,8 +49,3 @@ while (t4 - t1) > 1:
         t3 = t1 + (t4 - t1) / gold
 
 print('Le maximum se trouve à {} K'.format((t4 + t1) / 2))
-
-import scipy.optimize as so
-
-print(so.golden(efficaciter, brack=(6000, 7000), tol=1))
-
