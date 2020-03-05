@@ -1,7 +1,6 @@
 import numpy as np
 from algorithme_QR import algo_qr, B
 from time import time
-from decimal import *
 
 
 def QR_eigenstuff(matrix, accuracy):
@@ -27,9 +26,7 @@ if __name__ == "__main__":
     print(vep)
     print(vap)
     print("L'algorithme avec une erreur de {0} a pris {1} secondes".format(error, time() - timer))
-    getcontext().prec = 20
-    error = Decimal(10 ** -18)
-    B_copy = Decimal()
+    error = 10 ** -18
     timer = time()
     vep, vap = QR_eigenstuff(B, error)
     print(vep)
