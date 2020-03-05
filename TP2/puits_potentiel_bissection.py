@@ -25,4 +25,4 @@ for state in range(6):
         else:
             end = midpoint
 
-    print("The energy of the {0} state is {1:06.3f}".format(state, (start + end) / 2))
+    print("The energy of the {0} state is {1:06.3f}eV".format(state, (start + end) / 2))
