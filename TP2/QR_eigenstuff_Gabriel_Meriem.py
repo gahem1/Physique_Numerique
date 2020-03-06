@@ -6,6 +6,10 @@ from time import time
 def QR_eigenstuff(matrix, accuracy):
     n = len(matrix[0, :])
     v = np.eye(n)
+    if accuracy <= 10 ** -16:
+        matrix = matrix.astype(np.longdouble)
+        v = matrix.astype(np.longdouble)
+
     verify_accuracy = np.ones((n, n), dtype=bool) ^ np.eye(n, dtype=bool)
     while np.any(abs(matrix[verify_accuracy]) > accuracy):
         q, r = algo_qr(matrix)
@@ -27,6 +31,7 @@ if __name__ == "__main__":
     print(vap)
     print("L'algorithme avec une erreur de {0} a pris {1:f} secondes".format(error, time() - timer))
     error = 10 ** -18
+    print(error)
     timer = time()
     vep, vap = QR_eigenstuff(B, error)
     print(vep)
