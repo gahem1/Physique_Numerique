@@ -7,7 +7,9 @@ def QR_eigenstuff(matrix, accuracy):
     v = np.eye(n)
 
     verify_accuracy = np.ones((n, n), dtype=bool) ^ np.eye(n, dtype=bool)
-    while np.any(abs(matrix[verify_accuracy]) > accuracy):
+    j = 0
+    while np.any(abs(matrix[verify_accuracy]) > accuracy) and j < 10000:
+        j += 1
         q, r = algo_qr(matrix)
         matrix, v = r @ q, v @ q
     return matrix, v
@@ -20,6 +22,11 @@ if __name__ == "__main__":
     print(vep)
     print(vap)
     error = 10 ** -12
+    print("Pour une erreur de {}".format(error))
+    vep, vap = QR_eigenstuff(B, error)
+    print(vep)
+    print(vap)
+    error = 10 ** -18
     print("Pour une erreur de {}".format(error))
     vep, vap = QR_eigenstuff(B, error)
     print(vep)
