@@ -5,13 +5,18 @@ from algorithme_QR_Gabriel_Meriem import algo_qr, B
 def QR_eigenstuff(matrix, accuracy):
     n = len(matrix[0, :])
     v = np.eye(n)
+    cap = 10000
 
     verify_accuracy = np.ones((n, n), dtype=bool) ^ np.eye(n, dtype=bool)
     j = 0
-    while np.any(abs(matrix[verify_accuracy]) > accuracy) and j < 10000:
+    while np.any(abs(matrix[verify_accuracy]) > accuracy) and j < cap:
         j += 1
         q, r = algo_qr(matrix)
         matrix, v = r @ q, v @ q
+
+    if j == cap:
+        print("Attention: l'erreur sera plus grande qu'attendu")
+
     return matrix, v
 
 
