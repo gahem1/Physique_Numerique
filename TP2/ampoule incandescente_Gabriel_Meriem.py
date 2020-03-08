@@ -35,17 +35,17 @@ gold = 1 + np.sqrt(5) / 2
 
 
 # initial values
-t1 = 5000
-t4 = 8000
+t1 = 6850
+t4 = 7150
 t2 = t4 - (t4 - t1) / gold
 t3 = t1 + (t4 - t1) / gold
 
 while (t4 - t1) > 1:
-    if efficacite(t2) < efficacite(t3):
-        t4, t3 = t3, t2
+    if efficacite(t2) > efficacite(t3):
+        t1 = t2
         t2 = t4 - (t4 - t1) / gold
     else:
-        t2, t1 = t3, t2
+        t4 = t3
         t3 = t1 + (t4 - t1) / gold
 
-print('Le maximum se trouve à {} K'.format((t4 + t1) / 2))
+print('Le maximum se trouve à {} K'.format((t2 + t3) / 2))
