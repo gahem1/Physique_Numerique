@@ -7,6 +7,7 @@ import scipy.constants as scte
 def f(x):
     return 5 - np.exp(-x)
 
+
 x = 0
 for i in range(20):
     x = f(x)
@@ -25,10 +26,10 @@ x = fixed_point(f, 0, xtol=erreur)
 print("La solution à l'aide de scipy.optimize.fixed.point est de {}".format(x))
 
 b = scte.h * scte.c / (x * scte.k)
-print("La constante de déplacement de Wien calculé est {}".format(b))
+print("La constante de déplacement de Wien calculée est {}".format(b))
 
 t = np.arange(-3, 8, 0.2)
-plt.plot(t, t, 'r', label = 'y = x')
-plt.plot(t, f(t), 'b', label = "y = 5 - exp(-x)")
+plt.plot(t, t, 'r', label='y = x')
+plt.plot(t, f(t), 'b', label="y = 5 - exp(-x)")
 plt.legend(loc="lower right")
 plt.show()
