@@ -24,4 +24,6 @@ B = np.array([[1, 4, 8, 4], [4, 2, 3, 7], [8, 3, 6, 9], [4, 7, 9, 2]])
 
 if __name__ == "__main__":
     Q, R = algo_qr(B)
+    print(Q)
+    print(R)
     print(Q @ R)
