@@ -30,20 +30,20 @@ def xpp(x1):
     return -x1 * (omega ** 2)
 
 
+N = 100000
+ti = 0
+tf = 50
+tvals = np.linspace(ti, tf, num=N)
+step = (tf - ti) / N
+
+omega = 1
+xi = 1
+xpi = 0
+
 if __name__ == "__main__":
-    N = 100000
-    ti = 0
-    tf = 50
-    tvals = np.linspace(ti, tf, num=N)
-    step = (tf - ti) / N
-
-    omega = 1
-    xi = 1
-    xpi = 0
-
     xvals, xpvals = rk4(N, xi, xpi, ti)
 
-    plt.figure(1)
+    plt.figure()
     plt.plot(tvals, xvals, linewidth=2)
     plt.ylabel("x(t)", fontsize=18)
     plt.xlabel("t", fontsize=18)
