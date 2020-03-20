@@ -40,10 +40,9 @@ if __name__ == "__main__":
     xi = 1
     xpi = 0
     angular_frequency = 1
-    xvals, xpvals = rk4(N, xi, xpi, angular_frequency, xpp)
 
     plt.figure()
-    plt.plot(tvals, xvals, linewidth=2)
+    plt.plot(tvals, rk4(N, xi, xpi, angular_frequency, xpp)[0], linewidth=2)
     plt.ylabel("x(t)", fontsize=18)
     plt.xlabel("t", fontsize=18)
     plt.xticks(fontsize=18)
