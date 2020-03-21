@@ -12,14 +12,13 @@ def rk4(n, x1, x2, omega, func):
         t += step
 
         r1 = step * x2
-        r2 = step * (x2 + 0.5 * r1)
-        r3 = step * (x2 + 0.5 * r2)
-        r4 = step * (x2 + r3)
-
         k1 = step * func(x1, omega)
-        k2 = step * func(x1 + 0.5 * k1, omega)
-        k3 = step * func(x1 + 0.5 * k2, omega)
-        k4 = step * func(x1 + k3, omega)
+        r2 = step * (x2 + 0.5 * k1)
+        k2 = step * func(x1 + 0.5 * r1, omega)
+        r3 = step * (x2 + 0.5 * k2)
+        k3 = step * func(x1 + 0.5 * r2, omega)
+        r4 = step * (x2 + k3)
+        k4 = step * func(x1 + r3, omega)
 
         x1 += (r1 + 2 * r2 + 2 * r3 + r4) / 6
         x2 += (k1 + 2 * k2 + 2 * k3 + k4) / 6
@@ -31,7 +30,7 @@ def xpp(x1, omega):
     return -x1 * (omega ** 2)
 
 
-N = 500000
+N = 100000
 tf = 50
 tvals = np.linspace(0, tf, num=N)
 step = tf / N
