@@ -11,14 +11,34 @@ def gravity(x1, x2, x3, d):
 
 
 def leapfrog(n, tf, x1, x2, x3, y1, y2, y3, vx1, vx2, vx3, vy1, vy2, vy3):
-    t, dt = 0, tf / n
+    t, dt = 0, 2 * tf / n
 
     xlist, ylist, vx, vy = np.empty([n, 3]), np.empty([n, 3]), np.empty([2, 3]), np.empty([2, 3])
 
     xlist[0, :], ylist[0, :] = np.array([x1, x2, x3]), np.array([y1, y2, y3])
     vx[0, :], vy[0, :] = np.array([vx1, vx2, vx3]), np.array([vy1, vy2, vy3])
 
-    for i in range(n - 1):
+    r1 = np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+    r2 = np.sqrt((x1 - x3) ** 2 + (y1 - y3) ** 2)
+    r3 = np.sqrt((x2 - x3) ** 2 + (y2 - y3) ** 2)
+    dist = np.array([r1, r2, r3])
+
+    rx1 = 0.25 * dt * vx[0, :]
+    ry1 = 0.25 * dt * vy[0, :]
+    kx1 = 0.25 * dt * gravity(x1, x2, x3, dist)
+    ky1 = 0.25 * dt * gravity(y1, y2, y3, dist)
+
+    r1 = np.sqrt((x1 + rx1[0] - x2 - rx1[1]) ** 2 + (y1 + ry1[0] - y2 - ry1[1]) ** 2)
+    r2 = np.sqrt((x1 + rx1[0] - x3 - rx1[2]) ** 2 + (y1 + ry1[0] - y3 - ry1[2]) ** 2)
+    r3 = np.sqrt((x2 + rx1[1] - x3 - rx1[2]) ** 2 + (y2 + ry1[1] - y3 - ry1[2]) ** 2)
+    dist = np.array([r1, r2, r3])
+
+    xlist[1, :] = xlist[0, :] + 0.5 * dt * (vx[0, :] + kx1)
+    ylist[1, :] = ylist[0, :] + 0.5 * dt * (vy[0, :] + ky1)
+    vx[1, :] = vx[0, :] + 0.5 * dt * gravity(x1 + rx1[0], x2 + rx1[1], x3 + rx1[2], dist)
+    vy[1, :] = vy[0, :] + 0.5 * dt * gravity(y1 + ry1[0], y2 + ry1[1], y3 + ry1[2], dist)
+
+    for i in range(n - 2):
         r1 = np.sqrt((xlist[i + 1, 0] - xlist[i + 1, 1]) ** 2 + (ylist[i + 1, 0] - ylist[i + 1, 1]) ** 2)
         r2 = np.sqrt((xlist[i + 1, 0] - xlist[i + 1, 2]) ** 2 + (ylist[i + 1, 0] - ylist[i + 1, 2]) ** 2)
         r3 = np.sqrt((xlist[i + 1, 1] - xlist[i + 1, 2]) ** 2 + (ylist[i + 1, 1] - ylist[i + 1, 2]) ** 2)
