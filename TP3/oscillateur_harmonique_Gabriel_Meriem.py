@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-def rk4(n, x1, x2, omega):
+def rk4(n, x1, x2, omega, func):
     xlist = np.empty(n)
     xplist = np.empty(n)
     t = 0
@@ -16,10 +16,10 @@ def rk4(n, x1, x2, omega):
         r3 = step * (x2 + 0.5 * r2)
         r4 = step * (x2 + r3)
 
-        k1 = step * xpp(x1, omega)
-        k2 = step * xpp(x1 + 0.5 * k1, omega)
-        k3 = step * xpp(x1 + 0.5 * k2, omega)
-        k4 = step * xpp(x1 + k3, omega)
+        k1 = step * func(x1, omega)
+        k2 = step * func(x1 + 0.5 * k1, omega)
+        k3 = step * func(x1 + 0.5 * k2, omega)
+        k4 = step * func(x1 + k3, omega)
 
         x1 += (r1 + 2 * r2 + 2 * r3 + r4) / 6
         x2 += (k1 + 2 * k2 + 2 * k3 + k4) / 6
@@ -40,10 +40,9 @@ if __name__ == "__main__":
     xi = 1
     xpi = 0
     angular_frequency = 1
-    xvals, xpvals = rk4(N, xi, xpi, angular_frequency)
 
     plt.figure()
-    plt.plot(tvals, xvals, linewidth=2)
+    plt.plot(tvals, rk4(N, xi, xpi, angular_frequency, xpp)[0], linewidth=2)
     plt.ylabel("x(t)", fontsize=18)
     plt.xlabel("t", fontsize=18)
     plt.xticks(fontsize=18)
