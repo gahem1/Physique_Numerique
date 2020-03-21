@@ -31,7 +31,7 @@ def xpp(x1, omega):
     return -x1 * (omega ** 2)
 
 
-N = 100000
+N = 500000
 tf = 50
 tvals = np.linspace(0, tf, num=N)
 step = tf / N
