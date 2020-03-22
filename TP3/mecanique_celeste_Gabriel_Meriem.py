@@ -62,7 +62,7 @@ if __name__ == "__main__":
     x1i, x2i, x3i, y1i, y2i, y3i = 1, -2, 1, 3, -1, -1
     vx1i, vx2i, vx3i, vy1i, vy2i, vy3i = 0, 0, 0, 0, 0, 0
     pointsx, pointsy = leapfrog(N, 1, x1i, x2i, x3i, y1i, y2i, y3i, vx1i, vx2i, vx3i, vy1i, vy2i, vy3i)
-    plt.plot(pointsx[:, 0], pointsy[:, 0], pointsx[:, 1], pointsy[:, 1], pointsx[:, 2], pointsy[:, 2], linewidth=0.5)
+    plt.plot(pointsx[:, 0], pointsy[:, 0], pointsx[:, 1], pointsy[:, 1], pointsx[:, 2], pointsy[:, 2])
     plt.plot(x1i, y1i, 'r*', x2i, y2i, 'r*', x3i, y3i, 'r*', markersize=5)
     plt.ylabel("y", fontsize=18)
     plt.xlabel("x", fontsize=18)
