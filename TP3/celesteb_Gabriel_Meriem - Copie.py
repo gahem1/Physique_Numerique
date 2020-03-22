@@ -35,13 +35,13 @@ def leapfrog(n, tf, xi, yi, vxi, vyi, xii, yii, vxii, vyii):
 G = 4 * np.pi ** 2
 
 if __name__ == "__main__":
-    N1 = 100000
+    N1 = 280000
     m1 = 3
     m2 = 4
     m3 = 5
     x1i, x2i, x3i, y1i, y2i, y3i = 1, -2, 1, 3, -1, -1
     vx1i, vx2i, vx3i, vy1i, vy2i, vy3i = 0, 0, 0, 0, 0, 0
-    tf1 = 1
+    tf1 = 2.5
     step = tf1 * 2 / N1
 
     xi, yi = np.array([x1i, x2i, x3i]), np.array([y1i, y2i, y3i])
@@ -68,17 +68,43 @@ if __name__ == "__main__":
     vyii = vyi + 0.5 * step * gravity(y1i + ry1[0], y2i + ry1[1], y3i + ry1[2], dist)
 
     px1, py1, vxf1, vyf1 = leapfrog(N1, tf1, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+
     xi, xii, yi, yii = px1[-2, :], px1[-1, :], py1[-2, :], py1[-1, :]
     vxi, vxii, vyi, vyii = vxf1[-2, :], vxf1[-1, :], vyf1[-2, :], vyf1[-1, :]
-    N2 = 200000
-    px2, py2, vxf2, vyf2 = leapfrog(N2, 1, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+    N2 = 300000
+    px2, py2, vxf2, vyf2 = leapfrog(N2, 0.25, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
 
-    pointsx, pointsy = np.empty([N1 + N2 - 2, 3]), np.empty([N1 + N2 - 2, 3])
+    xi, xii, yi, yii = px2[-2, :], px2[-1, :], py2[-2, :], py2[-1, :]
+    vxi, vxii, vyi, vyii = vxf2[-2, :], vxf2[-1, :], vyf2[-2, :], vyf2[-1, :]
+    N3 = 100000
+    px3, py3, vxf3, vyf3 = leapfrog(N3, 0.85, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+
+    xi, xii, yi, yii = px3[-2, :], px3[-1, :], py3[-2, :], py3[-1, :]
+    vxi, vxii, vyi, vyii = vxf3[-2, :], vxf3[-1, :], vyf3[-2, :], vyf3[-1, :]
+    N4 = 100000
+    px4, py4, vxf4, vyf4 = leapfrog(N4, 0.05, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+
+    xi, xii, yi, yii = px4[-2, :], px4[-1, :], py4[-2, :], py4[-1, :]
+    vxi, vxii, vyi, vyii = vxf4[-2, :], vxf4[-1, :], vyf4[-2, :], vyf4[-1, :]
+    N5 = 80000
+    px5, py5, vxf5, vyf5 = leapfrog(N5, 0.25, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+
+    Nt2 = N1 + N2
+    Nt3 = Nt2 + N3
+    Nt4 = Nt3 + N4
+    NT = Nt4 + N5
+    s = 4  # Number of times the interval changes
+
+    pointsx, pointsy = np.empty([NT - 2 * s, 3]), np.empty([NT - 2 * s, 3])
     pointsx[:N1 - 2, :], pointsy[:N1 - 2, :] = px1[:-2, :], py1[:-2, :]
-    pointsx[N1 - 2:N1 - 2 + N2, :], pointsy[N1 - 2:N1 - 2 + N2, :] = px2, py2
+    pointsx[N1 - 2:Nt2 - 4, :], pointsy[N1 - 2:Nt2 - 4, :] = px2[:-2, :], py2[:-2, :]
+    pointsx[Nt2 - 4:Nt3 - 6, :], pointsy[Nt2 - 4:Nt3 - 6, :] = px3[:-2, :], py3[:-2, :]
+    pointsx[Nt3 - 6:Nt4 - 8, :], pointsy[Nt3 - 6:Nt4 - 8, :] = px4[:-2, :], py4[:-2, :]
+    pointsx[Nt4 - 8:NT - 8, :], pointsy[Nt4 - 8:NT - 8, :] = px5, py5
 
-    plt.plot(pointsx[:, 0], pointsy[:, 0], pointsx[:, 1], pointsy[:, 1], pointsx[:, 2], pointsy[:, 2], linewidth=0.5)
-    plt.plot(pointsx[0, :], pointsy[0, :], 'r*', pointsx[N1, :], pointsy[N1, :], 'k*', markersize=5)
+    plt.plot(pointsx[::50, 0], pointsy[::50, 0], pointsx[::50, 1], pointsy[::50, 1], pointsx[::50, 2],
+             pointsy[::50, 2], linewidth=0.5)
+    plt.plot(pointsx[0, :], pointsy[0, :], 'r*', markersize=5)
     plt.ylabel("y", fontsize=18)
     plt.xlabel("x", fontsize=18)
     plt.xticks(fontsize=18)
