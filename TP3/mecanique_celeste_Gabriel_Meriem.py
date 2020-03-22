@@ -68,6 +68,6 @@ if __name__ == "__main__":
     plt.xlabel("x", fontsize=18)
     plt.xticks(fontsize=18)
     plt.yticks(fontsize=18)
-    plt.legend(["m1={}".format(m1), "m2={}".format(m2), "m3={}".format(m3)], loc="upper left", fontsize=12)
+    plt.legend(["m1={}".format(m1), "m2={}".format(m2), "m3={}".format(m3)], loc="upper left", fontsize=16)
     plt.gca().set_aspect('equal', adjustable='box')
     plt.show()
