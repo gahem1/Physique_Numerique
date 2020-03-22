@@ -55,13 +55,11 @@ def leapfrog(n, tf, x1, x2, x3, y1, y2, y3, vx1, vx2, vx3, vy1, vy2, vy3):
 G = 4 * np.pi ** 2
 
 if __name__ == "__main__":
-    N = 10000000
-    m1 = 3
-    m2 = 4
-    m3 = 5
-    x1i, x2i, x3i, y1i, y2i, y3i = 1, -2, 1, 3, -1, -1
-    vx1i, vx2i, vx3i, vy1i, vy2i, vy3i = 0, 0, 0, 0, 0, 0
-    pointsx, pointsy = leapfrog(N, 2, x1i, x2i, x3i, y1i, y2i, y3i, vx1i, vx2i, vx3i, vy1i, vy2i, vy3i)
+    N = 5000000
+    m1, m2, m3 = 1, 1, 1
+    x1i, x2i, x3i, y1i, y2i, y3i = 3.3030197, -3.3030197, 0, -0.82771837, -0.82771837, 0
+    vx1i, vx2i, vx3i, vy1i, vy2i, vy3i = 1.587433767, 1.587433767, -3.174867535, 1.4722179, 1.47221479, -2.94442961
+    pointsx, pointsy = leapfrog(N, 10, x1i, x2i, x3i, y1i, y2i, y3i, vx1i, vx2i, vx3i, vy1i, vy2i, vy3i)
     plt.plot(pointsx[:, 0], pointsy[:, 0], pointsx[:, 1], pointsy[:, 1], pointsx[:, 2], pointsy[:, 2], linewidth=0.5)
     plt.plot(x1i, y1i, 'r*', x2i, y2i, 'r*', x3i, y3i, 'r*', markersize=5)
     plt.ylabel("y", fontsize=18)
