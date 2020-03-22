@@ -10,33 +10,13 @@ def gravity(x1, x2, x3, d):
     return -G * np.array([ax1, ax2, ax3])
 
 
-def leapfrog(n, tf, x1, x2, x3, y1, y2, y3, vx1, vx2, vx3, vy1, vy2, vy3):
+def leapfrog(n, tf, xi, yi, vxi, vyi, xii, yii, vxii, vyii):
     t, dt = 0, 2 * tf / n
 
     xlist, ylist, vx, vy = np.empty([n, 3]), np.empty([n, 3]), np.empty([2, 3]), np.empty([2, 3])
 
-    xlist[0, :], ylist[0, :] = np.array([x1, x2, x3]), np.array([y1, y2, y3])
-    vx[0, :], vy[0, :] = np.array([vx1, vx2, vx3]), np.array([vy1, vy2, vy3])
-
-    r1 = np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-    r2 = np.sqrt((x1 - x3) ** 2 + (y1 - y3) ** 2)
-    r3 = np.sqrt((x2 - x3) ** 2 + (y2 - y3) ** 2)
-    dist = np.array([r1, r2, r3])
-
-    rx1 = 0.25 * dt * vx[0, :]
-    ry1 = 0.25 * dt * vy[0, :]
-    kx1 = 0.25 * dt * gravity(x1, x2, x3, dist)
-    ky1 = 0.25 * dt * gravity(y1, y2, y3, dist)
-
-    r1 = np.sqrt((x1 + rx1[0] - x2 - rx1[1]) ** 2 + (y1 + ry1[0] - y2 - ry1[1]) ** 2)
-    r2 = np.sqrt((x1 + rx1[0] - x3 - rx1[2]) ** 2 + (y1 + ry1[0] - y3 - ry1[2]) ** 2)
-    r3 = np.sqrt((x2 + rx1[1] - x3 - rx1[2]) ** 2 + (y2 + ry1[1] - y3 - ry1[2]) ** 2)
-    dist = np.array([r1, r2, r3])
-
-    xlist[1, :] = xlist[0, :] + 0.5 * dt * (vx[0, :] + kx1)
-    ylist[1, :] = ylist[0, :] + 0.5 * dt * (vy[0, :] + ky1)
-    vx[1, :] = vx[0, :] + 0.5 * dt * gravity(x1 + rx1[0], x2 + rx1[1], x3 + rx1[2], dist)
-    vy[1, :] = vy[0, :] + 0.5 * dt * gravity(y1 + ry1[0], y2 + ry1[1], y3 + ry1[2], dist)
+    xlist[0, :], ylist[0, :], vx[0, :], vy[0, :] = xi, yi, vxi, vyi
+    xlist[1, :], ylist[1, :], vx[1, :], vy[1, :] = xii, yii, vxii, vyii
 
     for i in range(n - 2):
         r1 = np.sqrt((xlist[i + 1, 0] - xlist[i + 1, 1]) ** 2 + (ylist[i + 1, 0] - ylist[i + 1, 1]) ** 2)
@@ -55,20 +35,50 @@ def leapfrog(n, tf, x1, x2, x3, y1, y2, y3, vx1, vx2, vx3, vy1, vy2, vy3):
 G = 4 * np.pi ** 2
 
 if __name__ == "__main__":
-    N = 10000
+    N1 = 100000
     m1 = 3
     m2 = 4
     m3 = 5
     x1i, x2i, x3i, y1i, y2i, y3i = 1, -2, 1, 3, -1, -1
     vx1i, vx2i, vx3i, vy1i, vy2i, vy3i = 0, 0, 0, 0, 0, 0
-    px1, py1, vxf1, vyf1 = leapfrog(N, 1, x1i, x2i, x3i, y1i, y2i, y3i, vx1i, vx2i, vx3i, vy1i, vy2i, vy3i)
-    x1i, x2i, x3i, y1i, y2i, y3i = px1[-1, 0], px1[-1, 1], px1[-1, 2], py1[-1, 0], px1[-1, 1], px1[-1, 2]
-    vx1i, vx2i, vx3i, vy1i, vy2i, vy3i = vxf1[-1, 0], vxf1[-1, 1], vxf1[-1, 2], vyf1[-1, 0], vxf1[-1, 1], vxf1[-1, 2]
-    N = 1000000
-    px2, py2, vxf2, vyf2 = leapfrog(N, 1, x1i, x2i, x3i, y1i, y2i, y3i, vx1i, vx2i, vx3i, vy1i, vy2i, vy3i)
-    pointsx, pointsy = px1 + px2, py1 + py2
+    tf1 = 1
+    step = tf1 * 2 / N1
+
+    xi, yi = np.array([x1i, x2i, x3i]), np.array([y1i, y2i, y3i])
+    vxi, vyi = np.array([vx1i, vx2i, vx3i]), np.array([vy1i, vy2i, vy3i])
+
+    r1 = np.sqrt((x1i - x2i) ** 2 + (y1i - y2i) ** 2)
+    r2 = np.sqrt((x1i - x3i) ** 2 + (y1i - y3i) ** 2)
+    r3 = np.sqrt((x2i - x3i) ** 2 + (y2i - y3i) ** 2)
+    dist = np.array([r1, r2, r3])
+
+    rx1 = 0.25 * step * vxi
+    ry1 = 0.25 * step * vyi
+    kx1 = 0.25 * step * gravity(x1i, x2i, x3i, dist)
+    ky1 = 0.25 * step * gravity(y1i, y2i, y3i, dist)
+
+    r1 = np.sqrt((x1i + rx1[0] - x2i - rx1[1]) ** 2 + (y1i + ry1[0] - y2i - ry1[1]) ** 2)
+    r2 = np.sqrt((x1i + rx1[0] - x3i - rx1[2]) ** 2 + (y1i + ry1[0] - y3i - ry1[2]) ** 2)
+    r3 = np.sqrt((x2i + rx1[1] - x3i - rx1[2]) ** 2 + (y2i + ry1[1] - y3i - ry1[2]) ** 2)
+    dist = np.array([r1, r2, r3])
+
+    xii = xi + 0.5 * step * (vxi + kx1)
+    yii = yi + 0.5 * step * (vyi + ky1)
+    vxii = vxi + 0.5 * step * gravity(x1i + rx1[0], x2i + rx1[1], x3i + rx1[2], dist)
+    vyii = vyi + 0.5 * step * gravity(y1i + ry1[0], y2i + ry1[1], y3i + ry1[2], dist)
+
+    px1, py1, vxf1, vyf1 = leapfrog(N1, tf1, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+    xi, xii, yi, yii = px1[-2, :], px1[-1, :], py1[-2, :], py1[-1, :]
+    vxi, vxii, vyi, vyii = vxf1[-2, :], vxf1[-1, :], vyf1[-2, :], vyf1[-1, :]
+    N2 = 200000
+    px2, py2, vxf2, vyf2 = leapfrog(N2, 1, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+
+    pointsx, pointsy = np.empty([N1 + N2 - 2, 3]), np.empty([N1 + N2 - 2, 3])
+    pointsx[:N1 - 2, :], pointsy[:N1 - 2, :] = px1[:-2, :], py1[:-2, :]
+    pointsx[N1 - 2:N1 - 2 + N2, :], pointsy[N1 - 2:N1 - 2 + N2, :] = px2, py2
+
     plt.plot(pointsx[:, 0], pointsy[:, 0], pointsx[:, 1], pointsy[:, 1], pointsx[:, 2], pointsy[:, 2], linewidth=0.5)
-    plt.plot(x1i, y1i, 'r*', x2i, y2i, 'r*', x3i, y3i, 'r*', markersize=5)
+    plt.plot(pointsx[0, :], pointsy[0, :], 'r*', pointsx[N1, :], pointsy[N1, :], 'k*', markersize=5)
     plt.ylabel("y", fontsize=18)
     plt.xlabel("x", fontsize=18)
     plt.xticks(fontsize=18)
