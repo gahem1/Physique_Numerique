@@ -76,31 +76,65 @@ if __name__ == "__main__":
 
     xi, xii, yi, yii = px2[-2, :], px2[-1, :], py2[-2, :], py2[-1, :]
     vxi, vxii, vyi, vyii = vxf2[-2, :], vxf2[-1, :], vyf2[-2, :], vyf2[-1, :]
-    N3 = 100000
-    px3, py3, vxf3, vyf3 = leapfrog(N3, 0.85, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+    N3 = 150000
+    px3, py3, vxf3, vyf3 = leapfrog(N3, 0.89, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
 
     xi, xii, yi, yii = px3[-2, :], px3[-1, :], py3[-2, :], py3[-1, :]
     vxi, vxii, vyi, vyii = vxf3[-2, :], vxf3[-1, :], vyf3[-2, :], vyf3[-1, :]
-    N4 = 100000
-    px4, py4, vxf4, vyf4 = leapfrog(N4, 0.05, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+    N4 = 1000000
+    px4, py4, vxf4, vyf4 = leapfrog(N4, 0.01, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
 
     xi, xii, yi, yii = px4[-2, :], px4[-1, :], py4[-2, :], py4[-1, :]
     vxi, vxii, vyi, vyii = vxf4[-2, :], vxf4[-1, :], vyf4[-2, :], vyf4[-1, :]
-    N5 = 80000
+    N5 = 30000
     px5, py5, vxf5, vyf5 = leapfrog(N5, 0.25, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+
+    xi, xii, yi, yii = px5[-2, :], px5[-1, :], py5[-2, :], py5[-1, :]
+    vxi, vxii, vyi, vyii = vxf5[-2, :], vxf5[-1, :], vyf5[-2, :], vyf5[-1, :]
+    N6 = 800000
+    px6, py6, vxf6, vyf6 = leapfrog(N6, 0.02, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+
+    xi, xii, yi, yii = px6[-2, :], px6[-1, :], py6[-2, :], py6[-1, :]
+    vxi, vxii, vyi, vyii = vxf6[-2, :], vxf6[-1, :], vyf6[-2, :], vyf6[-1, :]
+    N7 = 200000
+    px7, py7, vxf7, vyf7 = leapfrog(N7, 0.46, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+
+    xi, xii, yi, yii = px7[-2, :], px7[-1, :], py7[-2, :], py7[-1, :]
+    vxi, vxii, vyi, vyii = vxf7[-2, :], vxf7[-1, :], vyf7[-2, :], vyf7[-1, :]
+    N8 = 800000
+    px8, py8, vxf8, vyf8 = leapfrog(N8, 0.02, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+
+    xi, xii, yi, yii = px8[-2, :], px8[-1, :], py8[-2, :], py8[-1, :]
+    vxi, vxii, vyi, vyii = vxf8[-2, :], vxf8[-1, :], vyf8[-2, :], vyf8[-1, :]
+    N9 = 100000
+    px9, py9, vxf9, vyf9 = leapfrog(N9, 0.30, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
+
+    xi, xii, yi, yii = px9[-2, :], px9[-1, :], py9[-2, :], py9[-1, :]
+    vxi, vxii, vyi, vyii = vxf9[-2, :], vxf9[-1, :], vyf9[-2, :], vyf9[-1, :]
+    N10 = 500000
+    px10, py10, vxf10, vyf10 = leapfrog(N10, 0.001, xi, yi, vxi, vyi, xii, yii, vxii, vyii)
 
     Nt2 = N1 + N2
     Nt3 = Nt2 + N3
     Nt4 = Nt3 + N4
-    NT = Nt4 + N5
-    s = 4  # Number of times the interval changes
+    Nt5 = Nt4 + N5
+    Nt6 = Nt5 + N6
+    Nt7 = Nt6 + N7
+    Nt8 = Nt7 + N8
+    Nt9 = Nt8 + N9
+    NT = Nt9 + N10
 
-    pointsx, pointsy = np.empty([NT - 2 * s, 3]), np.empty([NT - 2 * s, 3])
+    pointsx, pointsy = np.empty([NT - 2, 3]), np.empty([NT - 2, 3])
     pointsx[:N1 - 2, :], pointsy[:N1 - 2, :] = px1[:-2, :], py1[:-2, :]
     pointsx[N1 - 2:Nt2 - 4, :], pointsy[N1 - 2:Nt2 - 4, :] = px2[:-2, :], py2[:-2, :]
     pointsx[Nt2 - 4:Nt3 - 6, :], pointsy[Nt2 - 4:Nt3 - 6, :] = px3[:-2, :], py3[:-2, :]
     pointsx[Nt3 - 6:Nt4 - 8, :], pointsy[Nt3 - 6:Nt4 - 8, :] = px4[:-2, :], py4[:-2, :]
-    pointsx[Nt4 - 8:NT - 8, :], pointsy[Nt4 - 8:NT - 8, :] = px5, py5
+    pointsx[Nt4 - 8:Nt5 - 10, :], pointsy[Nt4 - 8:Nt5 - 10, :] = px5[:-2, :], py5[:-2, :]
+    pointsx[Nt5 - 10:Nt6 - 12, :], pointsy[Nt5 - 10:Nt6 - 12, :] = px6[:-2, :], py6[:-2, :]
+    pointsx[Nt6 - 12:Nt7 - 14, :], pointsy[Nt6 - 12:Nt7 - 14, :] = px7[:-2, :], py7[:-2, :]
+    pointsx[Nt7 - 14:Nt8 - 16, :], pointsy[Nt7 - 14:Nt8 - 16, :] = px8[:-2, :], py8[:-2, :]
+    pointsx[Nt8 - 16:Nt9 - 18, :], pointsy[Nt8 - 16:Nt9 - 18, :] = px9[:-2, :], py9[:-2, :]
+    pointsx[Nt9 - 18:NT - 18, :], pointsy[Nt9 - 18:NT - 18, :] = px10, py10
 
     plt.plot(pointsx[::50, 0], pointsy[::50, 0], pointsx[::50, 1], pointsy[::50, 1], pointsx[::50, 2],
              pointsy[::50, 2], linewidth=0.5)
