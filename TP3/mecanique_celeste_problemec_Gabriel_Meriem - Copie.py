@@ -55,17 +55,27 @@ def leapfrog(n, tf, x1, x2, x3, y1, y2, y3, vx1, vx2, vx3, vy1, vy2, vy3):
 G = 4 * np.pi ** 2
 
 if __name__ == "__main__":
-    N = 5000000
+    N = 1000000
     m1, m2, m3 = 1, 1, 1
     x1i, x2i, x3i, y1i, y2i, y3i = 3.3030197, -3.3030197, 0, -0.82771837, -0.82771837, 0
     vx1i, vx2i, vx3i, vy1i, vy2i, vy3i = 1.587433767, 1.587433767, -3.174867535, 1.4722179, 1.47221479, -2.94442961
+
     pointsx, pointsy = leapfrog(N, 10, x1i, x2i, x3i, y1i, y2i, y3i, vx1i, vx2i, vx3i, vy1i, vy2i, vy3i)
-    plt.plot(pointsx[:, 0], pointsy[:, 0], pointsx[:, 1], pointsy[:, 1], pointsx[:, 2], pointsy[:, 2], linewidth=0.5)
-    plt.plot(x1i, y1i, 'r*', x2i, y2i, 'r*', x3i, y3i, 'r*', markersize=5)
+    plt.plot(pointsx[:, 0], pointsy[:, 0], 'b', pointsx[:, 1], pointsy[:, 1], 'r', pointsx[:, 2], pointsy[:, 2], 'g',
+             linewidth=0.5)
+
+    pointsx, pointsy = leapfrog(N, 10, x1i, x2i, x3i, y1i, y2i, y3i, vx1i, vx2i, vx3i, vy1i, vy2i, vy3i)
+    plt.plot(pointsx[:, 0], pointsy[:, 0], 'b:', pointsx[:, 1], pointsy[:, 1], 'r:', pointsx[:, 2], pointsy[:, 2], 'g:',
+             linewidth=0.5)
+
+    pointsx, pointsy = leapfrog(N, 10, x1i, x2i, x3i, y1i, y2i, y3i, vx1i, vx2i, vx3i, vy1i, vy2i, vy3i)
+    plt.plot(pointsx[:, 0], pointsy[:, 0], 'b--', pointsx[:, 1], pointsy[:, 1], 'r--', pointsx[:, 2], pointsy[:, 2],
+             'g--', linewidth=0.5)
+
     plt.ylabel("y", fontsize=18)
     plt.xlabel("x", fontsize=18)
     plt.xticks(fontsize=18)
     plt.yticks(fontsize=18)
-    plt.legend(["m1={}".format(m1), "m2={}".format(m2), "m3={}".format(m3)], loc="upper left", fontsize=12)
+    plt.legend(["m11", "m21", "m31", "m12", "m22", "m32", "m13", "m23", "m33"], loc="upper left", fontsize=10)
     plt.gca().set_aspect('equal', adjustable='box')
     plt.show()
