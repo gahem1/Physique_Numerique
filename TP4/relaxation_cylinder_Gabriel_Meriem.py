@@ -36,4 +36,11 @@ class Cylinder:
 
 
 if __name__ == "__main__":
-    test = Cylinder(1, 150, np.array([10]), np.array([0, 30]), 0.01, 2 * 10 ** -8)
+    err = 2 * 10 ** -8
+    test = Cylinder(1, 150, np.array([10]), np.array([0, 30]), 0.01, err)
+    while test.error >= err:
+        test.iterate()
+        print(test.error)
+
+    print(test.error)
+    print(test.iteration)
