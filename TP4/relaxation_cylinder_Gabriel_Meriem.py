@@ -18,7 +18,7 @@ class Cylinder:
         for i in range(len(r_max)):
             r = int((r_max[i] - r_min) / step + 1)
             z1, z2 = int((z_bounds[i] - z_bounds[0]) / step + 1), int((z_bounds[i + 1] - z_bounds[0]) / step + 2)
-            self.grid[0:r, z1:z2] = np.tile(np.arange(r, 0, -1) * v_mid / r, (z2 - z1, 1)).T
+            self.grid[0:r, z1:z2] = np.tile(np.arange(r - 1, -1, -1) * v_mid / r, (z2 - z1, 1)).T
             self.unfixed[1:r - 1, z1:z2] = np.ones((r - 2, z2 - z1), dtype=bool)
 
     def iterate(self):
@@ -40,7 +40,6 @@ if __name__ == "__main__":
     test = Cylinder(1, 150, np.array([10]), np.array([0, 30]), 0.01, err)
     while test.error >= err:
         test.iterate()
-        print(test.error)
 
     print(test.error)
     print(test.iteration)
