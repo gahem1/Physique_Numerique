@@ -5,7 +5,7 @@ from time import time
 
 
 class Gauss:
-    def __init__(self, r_min, v_mid, r_max, z_bounds, step, error, ztige):
+    def __init__(self, r_min, v_mid, r_max, z_bounds, step, error):
         self.iteration = 0
         self.v_mid = v_mid
         self.step = step
@@ -37,15 +37,15 @@ class Gauss:
                     if abs(add - self.grid[i, j]) > self.error:
                         self.error = abs(add - self.grid[i, j])
 
-                    self.grid[i, j] += add
+                    self.grid[i, j] = add
 
         self.iteration += 1
 
 
 if __name__ == "__main__":
-    err = 0.1
+    err = 0.01
     h = 2 * err
-    cyl = Gauss(1, 150, np.array([10]), np.array([0, 30]), h, err, np.array([0, 30]))
+    cyl = Gauss(1, 150, np.array([10]), np.array([0, 30]), h, err)
     debut = time()
     while cyl.error > err:
         cyl.iterate()
@@ -56,9 +56,9 @@ if __name__ == "__main__":
     ax = sns.heatmap(cyl.grid[-1:1:-1, 1:-1], cbar_kws={'label': 'Voltage [V]'})
     ax.set_xlabel("z [cm]", fontsize=20)
     ax.set_ylabel("r [cm]", fontsize=20)
-    ax.set_xticks(np.arange(0.5, 175.5, 25))
+    ax.set_xticks(np.arange(0.5, 1750.5, 25))
     ax.set_xticklabels(np.arange(0, 35, 5), fontsize=18)
-    ax.set_yticks(np.arange(0, 110, 10))
+    ax.set_yticks(np.arange(0, 1100, 10))
     ax.set_yticklabels(np.arange(10, -1, -1), fontsize=18)
     ax.figure.axes[-1].yaxis.label.set_size(20)
     plt.show()
