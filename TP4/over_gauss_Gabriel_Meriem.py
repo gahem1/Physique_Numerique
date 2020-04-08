@@ -12,11 +12,11 @@ class OverGauss:
         self.error = error + 1
         self.cible = error
         self.omega = omega
-        self.num_r = int((r_max.max() - r_min) * 2 / step + 3)
+        self.num_r = int(r_max.max() * 2 / step + 3)
         self.num_z = int((z_bounds[-1] - z_bounds[0]) / step + 3)
         self.grid = np.zeros((self.num_r, self.num_z))
         self.unfixed = np.zeros((self.num_r, self.num_z), dtype=bool)
-        self.rmat = np.tile(np.arange(r_min, r_max.max(), step / 2), (self.num_z - 2, 1)).T
+        self.rmat = np.tile(np.arange(step / 2, r_max.max(), step / 2), (self.num_z - 2, 1)).T
         self.rmat = self.step / self.rmat
         r1 = int(r_min * 2 / step + 3)
         for i in range(len(r_max)):
