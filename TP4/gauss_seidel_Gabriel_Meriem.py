@@ -46,9 +46,9 @@ class Gauss:
 
 
 if __name__ == "__main__":
-    err = 0.05
+    err = 0.1
     h = 2 * err
-    
+
     cyl = Gauss(1, 150, np.array([10]), np.array([0, 30]), h, err, np.array([0, 30]))
     debut = time()
     while cyl.error > err:
