@@ -31,8 +31,10 @@ if __name__ == "__main__":
     plt.xlabel("Nombre d'itérations", fontsize=18)
     plt.ylabel("Erreur maximale [V]", fontsize=18)
     plt.legend(["2b", "G-S", "SG-S", "OR"], fontsize=18)
+    plt.show()
 
     plt.plot(x, tim[0, :], 'r', x, tim[1, :], 'g', x, tim[2, :], 'b', x, tim[3, :], 'y')
     plt.xlabel("Nombre d'itérations", fontsize=18)
     plt.ylabel("Erreur maximale [V]", fontsize=18)
     plt.legend(["2b", "G-S", "SG-S", "OR"], fontsize=18)
+    plt.show()
