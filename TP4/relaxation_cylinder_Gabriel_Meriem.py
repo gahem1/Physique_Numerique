@@ -41,7 +41,7 @@ class Cylinder:
 
 
 if __name__ == "__main__":
-    err = 0.05
+    err = 0.01
     h = 2 * err
     cyl = Cylinder(1, 150, np.array([10]), np.array([0, 30]), h, err, np.array([0, 30]))
     debut = time()

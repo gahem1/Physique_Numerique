@@ -43,7 +43,7 @@ class Gauss:
 
 
 if __name__ == "__main__":
-    err = 0.01
+    err = 0.05
     h = 2 * err
     cyl = Gauss(1, 150, np.array([10]), np.array([0, 30]), h, err)
     debut = time()
@@ -56,9 +56,9 @@ if __name__ == "__main__":
     ax = sns.heatmap(cyl.grid[-1:1:-1, 1:-1], cbar_kws={'label': 'Voltage [V]'})
     ax.set_xlabel("z [cm]", fontsize=20)
     ax.set_ylabel("r [cm]", fontsize=20)
-    ax.set_xticks(np.arange(0.5, 1750.5, 25))
+    ax.set_xticks(np.arange(0.5, 350.5, 50))
     ax.set_xticklabels(np.arange(0, 35, 5), fontsize=18)
-    ax.set_yticks(np.arange(0, 1100, 10))
-    ax.set_yticklabels(np.arange(10, -1, -1), fontsize=18)
+    ax.set_yticks(np.arange(0, 200, 20))
+    ax.set_yticklabels(np.arange(10, 0, -1), fontsize=18)
     ax.figure.axes[-1].yaxis.label.set_size(20)
     plt.show()
