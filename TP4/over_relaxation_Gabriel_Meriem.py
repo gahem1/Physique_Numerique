@@ -4,7 +4,7 @@ import seaborn as sns
 from time import time
 
 
-class Cylinder:
+class Failure:
     def __init__(self, r_min, v_mid, r_max, z_bounds, step, error, ztige, omega):
         self.iteration = 0
         self.v_mid = v_mid
@@ -27,7 +27,7 @@ class Cylinder:
             self.unfixed[:r2 - 2, z1:z2] = bool(1)
 
         z1, z2 = int((ztige[0] - z_bounds[0]) / step), int((ztige[-1] - z_bounds[0]) / step + 2)
-        self.grid[0:r1, z1:z2] = v_mid
+        self.grid[:r1, z1:z2] = v_mid
         self.unfixed[:r1, z1:z2] = bool(0)
 
     def iterate(self):
@@ -42,9 +42,9 @@ class Cylinder:
 
 
 if __name__ == "__main__":
-    err = 0.01
+    err = 0.05
     h = 2 * err
-    cyl = Cylinder(1, 150, np.array([10]), np.array([0, 30]), h, err, np.array([0, 30]), 0.001)
+    cyl = Failure(1, 150, np.array([10]), np.array([0, 30]), h, err, np.array([0, 30]), 0.001)
     debut = time()
     while cyl.error > err:
         cyl.iterate()
