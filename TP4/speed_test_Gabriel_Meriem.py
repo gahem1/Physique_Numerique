@@ -18,7 +18,7 @@ if __name__ == "__main__":
     it.append(cyl)
     cyl = OverGauss(1, 150, np.array([10]), np.array([0, 30]), h, error, np.array([0, 30]), 0.9435)
     it.append(cyl)
-    cyl = Failure(1, 150, np.array([10]), np.array([0, 30]), h, error, np.array([0, 30]), 0.001)
+    cyl = Failure(1, 150, np.array([10]), np.array([0, 30]), h, error, np.array([0, 30]), 0.005)
     it.append(cyl)
     for i in range(4):
         debut = time()
