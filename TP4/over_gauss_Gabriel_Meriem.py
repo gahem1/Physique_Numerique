@@ -50,7 +50,7 @@ if __name__ == "__main__":
     err = 0.05
     h = 2 * err
 
-    cyl = OverGauss(1, 150, np.array([10]), np.array([0, 30]), h, err, np.array([0, 30]), 0.9435)
+    cyl = OverGauss(1, 150, np.array([10]), np.array([0, 30]), h, err, np.array([0, 30]), 0.94)
     debut = time()
     while cyl.error > err:
         cyl.iterate()

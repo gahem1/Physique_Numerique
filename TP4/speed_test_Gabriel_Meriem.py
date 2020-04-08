@@ -10,7 +10,7 @@ if __name__ == "__main__":
     it = []
 
     error = 10 ** -8
-    h = 0.05
+    h = 0.1
 
     cyl = Cylinder(1, 150, np.array([10]), np.array([0, 30]), h, error, np.array([0, 30]))
     it.append(cyl)
@@ -31,10 +31,14 @@ if __name__ == "__main__":
     plt.xlabel("Nombre d'itérations", fontsize=18)
     plt.ylabel("Erreur maximale [V]", fontsize=18)
     plt.legend(["2b", "G-S", "SG-S", "OR"], fontsize=18)
+    plt.yscale('log')
+    plt.xscale('log')
     plt.show()
 
     plt.plot(x, tim[0, :], 'r', x, tim[1, :], 'g', x, tim[2, :], 'b', x, tim[3, :], 'y')
     plt.xlabel("Nombre d'itérations", fontsize=18)
     plt.ylabel("Erreur maximale [V]", fontsize=18)
     plt.legend(["2b", "G-S", "SG-S", "OR"], fontsize=18)
+    plt.yscale('log')
+    plt.xscale('log')
     plt.show()
