@@ -4,25 +4,25 @@ from over_relaxation_Gabriel_Meriem import Failure
 from over_gauss_Gabriel_Meriem import OverGauss
 
 if __name__ == "__main__":
-    x = np.arange(1, 601)
-    err = np.empty((4, 600))
-    tim = np.empty((4, 600))
+    x = np.arange(1, 1001)
+    err = np.empty((4, 1000))
+    tim = np.empty((4, 1000))
     it = []
 
-    error = 10 ** -8
+    error = 0
     h = 0.1
 
     cyl = Cylinder(1, 150, np.array([10]), np.array([0, 30]), h, error, np.array([0, 30]))
     it.append(cyl)
     cyl = Gauss(1, 150, np.array([10]), np.array([0, 30]), h, error, np.array([0, 30]))
     it.append(cyl)
-    cyl = OverGauss(1, 150, np.array([10]), np.array([0, 30]), h, error, np.array([0, 30]), 0.9435)
+    cyl = OverGauss(1, 150, np.array([10]), np.array([0, 30]), h, error, np.array([0, 30]), 0.94)
     it.append(cyl)
     cyl = Failure(1, 150, np.array([10]), np.array([0, 30]), h, error, np.array([0, 30]), 0.005)
     it.append(cyl)
     for i in range(4):
         debut = time()
-        for j in range(600):
+        for j in range(1000):
             it[i].iterate()
             err[i, j] = it[i].error
             tim[i, j] = time() - debut
