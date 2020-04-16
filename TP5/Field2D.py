@@ -45,7 +45,15 @@ class Field2D:
         plt.show()
 
     def propagate(self, distance:float):
-        raise Error("Not Implemented")
+        Efield = zeros((len(self.values[:, 0]), len(self.values[0,:])))  # Initialize with no field for a given r
+        xlist, ylist =
+        for i, x in enumerate(self.x):
+            for j, y in enumerate(self.y):
+                A = self.values[i, j]
+
+                Ro = sqrt((y - self.y) ** 2 +  ** 2)
+                # we don't divide by r because we keep everything normalized
+                Efield[] += A * exp(-I * k * Ro)
 
     @classmethod
     def Gaussian(self, ds:float, N:int, width:float, wavelength:float, amplitude:float = 1.0):
