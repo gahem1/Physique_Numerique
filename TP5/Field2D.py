@@ -46,14 +46,13 @@ class Field2D:
 
     def propagate(self, distance:float):
         Efield = zeros((len(self.values[:, 0]), len(self.values[0,:])))  # Initialize with no field for a given r
-        xlist, ylist =
+        A = self.values  # Amplitudes
+        xlist, ylist = np.tile(self.x, (len(self.values[:, 0]), 1)).T, np.tile(self.y, (len(self.values[0, :]), 1))
         for i, x in enumerate(self.x):
             for j, y in enumerate(self.y):
-                A = self.values[i, j]
-
-                Ro = sqrt((y - self.y) ** 2 +  ** 2)
+                Ro = sqrt((x - xlist) ** 2 + (y - ylist) ** 2 + distance ** 2)
                 # we don't divide by r because we keep everything normalized
-                Efield[] += A * exp(-I * k * Ro)
+                Efield[i, j] += np.sum(A * exp(-I * 2 * pi * Ro / self.wavelength))
 
     @classmethod
     def Gaussian(self, ds:float, N:int, width:float, wavelength:float, amplitude:float = 1.0):
