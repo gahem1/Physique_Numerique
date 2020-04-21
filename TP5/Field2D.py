@@ -71,9 +71,9 @@ class Field2D:
 
 
 if __name__ == "__main__":
-    f = Field2D.Gaussian(width=2, amplitude=10.0, ds=0.1, N=250, wavelength=2)
+    f = Field2D.Gaussian(width=50, amplitude=32.0, ds=0.8, N=250, wavelength=2)
     f.showIntensity()
     temps = time()
-    f.propagate(5)
+    f.propagate(1000)
     print(time() - temps)
     f.showIntensity()
