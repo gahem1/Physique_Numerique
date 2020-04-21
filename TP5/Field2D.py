@@ -55,7 +55,6 @@ class Field2D:
         for i, x in enumerate(self.x):
             for j, y in enumerate(self.y):
                 Ro = sqrt((x - xlist) ** 2 + (y - ylist) ** 2 + distance ** 2)
-                # we don't divide by r because we keep everything normalized
                 Efield[i, j] += sum(A * exp(-I * 2 * pi * Ro / self.wavelength) / Ro)
         self.values = Efield * self.dx * self.dy
 
@@ -72,7 +71,7 @@ class Field2D:
 
 
 if __name__ == "__main__":
-    f = Field2D.Gaussian(width=10, amplitude=16.0, ds=0.1, N=250, wavelength=2)
+    f = Field2D.Gaussian(width=2, amplitude=10.0, ds=0.1, N=250, wavelength=2)
     f.showIntensity()
     temps = time()
     f.propagate(5)
