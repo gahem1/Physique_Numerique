@@ -2,7 +2,7 @@ import numpy as np
 
 
 class Operator:
-    def __init__(self, dim: int, alpha: float, beta: float, prev_matrix:np.ndarray=None):
+    def __init__(self, dim: int, alpha: float, beta: float, prev_matrix: np.ndarray = None):
         self.N = dim
         if prev_matrix is None:
             self.matrix = np.zeros((dim, dim))
