@@ -2,31 +2,33 @@ import numpy as np
 
 
 class Operator:
-    def __init__(self, dim: int, alpha: float, beta: float):
+    def __init__(self, dim: int, alpha: float, beta: float, prev_matrix:np.ndarray=None):
         self.N = dim
-        self.matrix = np.zeros((dim, dim))
+        if prev_matrix is None:
+            self.matrix = np.zeros((dim, dim))
 
-        fac = np.arange(1, dim - 3)
-        self.matrix[4:, :-4] += np.diag(beta * np.sqrt(fac * (fac + 1) * (fac + 2) * (fac + 3)))
+            fa = np.arange(1, dim - 3)  # smallest factor, used to optimize matrix initialization
+            self.matrix[4:, :-4] += np.diag(beta * np.sqrt(fa * (fa + 1) * (fa + 2) * (fa + 3)))
 
-        fac = np.arange(1, dim - 2)
-        self.matrix[3:, :-3] += np.diag(alpha * np.sqrt(fac * (fac + 1) * (fac + 2)))
+            fa = np.arange(1, dim - 2)
+            self.matrix[3:, :-3] += np.diag(alpha * np.sqrt(fa * (fa + 1) * (fa + 2)))
 
-        fac = np.arange(dim - 1)
-        ptwo +=
+            fa = np.arange(dim - 2)
+            com = np.sqrt(fa + 1)  # common factor, used to optimize matrix initialization
+            ter = fa * np.sqrt(fa + 2) + (fa + 1) * np.sqrt(fa + 2) + (fa + 2) ** (3/2) + (fa + 3) * np.sqrt(fa + 2)
+            self.matrix[2:, :-2] += np.diag(beta * com * ter)
 
-        pone +=
+            fa = np.arange(dim - 1)
+            com = np.sqrt(fa + 1)
+            self.matrix[1:, :-1] += np.diag(alpha * com * (2 * fa + 2 + com ** 2))
 
-        n +=
+            self.matrix += self.matrix.T
 
-        mone +=
+            fa = np.arange(dim)
+            self.matrix += np.diag(3 * beta * (2 * fa * (fa + 1) + 1) + fa + 0.5)
 
-        mtwo +=
-
-        mthree +=
-
-        mfour +=
-
+        else:
+            self.matrix = prev_matrix[:dim, :dim]
 
     def algo_qr(self):
         q, r = np.zeros((self.N, self.N)), np.zeros((self.N, self.N))
