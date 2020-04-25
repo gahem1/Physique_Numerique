@@ -42,3 +42,7 @@ class Operator:
             r[i, i] = np.sqrt(np.sum(u * u))
             q[:, i] = u / r[i, i]
         return q, r
+
+
+if __name__ == '__main__':
+    test = Operator(20, 0.02, 0.01)
