@@ -1,9 +1,10 @@
 import numpy as np
+from time import time
 
 
 class Operator:
     def __init__(self, dim: int, alpha: float, beta: float, prev_matrix: np.ndarray = None):
-        self.N = dim
+        self.N, self.vep = dim, np.eye(dim)
         if prev_matrix is None:
             self.matrix = np.zeros((dim, dim))
 
@@ -30,9 +31,11 @@ class Operator:
         else:
             self.matrix = prev_matrix[:dim, :dim]
 
+        self.vap = self.matrix
+
     def algo_qr(self):
         q, r = np.zeros((self.N, self.N)), np.zeros((self.N, self.N))
-        u = np.copy(self.matrix[:, 0])
+        u = np.copy(self.vap[:, 0])
         r[0, 0] = np.sqrt(sum(u * u))
         q[:, 0] = u / r[0, 0]
         for i in range(1, self.N):
@@ -41,8 +44,21 @@ class Operator:
             u = self.matrix[:, i] - np.sum(np.tile(r[:i, i], (self.N, 1)) * q[:, :i], axis=1)
             r[i, i] = np.sqrt(np.sum(u * u))
             q[:, i] = u / r[i, i]
+
         return q, r
+
+    def algo_eigen(self, accuracy: float= 0, cap: int= 50000):
+        verify_accuracy = np.ones((self.N, self.N), dtype=bool) ^ np.eye(self.N, dtype=bool)
+        j = 0
+        temps = time()
+        while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
+            j += 1
+            q, r = self.algo_qr()
+            self.vap, self.vep = r @ q, self.vep @ q
+
+        temps = time() - temps
+        return self.vap, self.vep, j, temps
 
 
 if __name__ == '__main__':
-    test = Operator(20, 0.02, 0.01)
+
