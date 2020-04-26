@@ -39,9 +39,9 @@ class Operator:
         r[0, 0] = np.sqrt(sum(u * u))
         q[:, 0] = u / r[0, 0]
         for i in range(1, self.N):
-            a = np.tile(self.matrix[:, i], (i, 1)).T
+            a = np.tile(self.vap[:, i], (i, 1)).T
             r[:i, i] = np.sum(a * q[:, :i], axis=0)
-            u = self.matrix[:, i] - np.sum(np.tile(r[:i, i], (self.N, 1)) * q[:, :i], axis=1)
+            u = self.vap[:, i] - np.sum(np.tile(r[:i, i], (self.N, 1)) * q[:, :i], axis=1)
             r[i, i] = np.sqrt(np.sum(u * u))
             q[:, i] = u / r[i, i]
 
