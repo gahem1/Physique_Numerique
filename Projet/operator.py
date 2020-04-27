@@ -62,22 +62,32 @@ class Operator:
 
         return q.T, r
 
-    def eigenalgo(self, version: int = 1, accuracy: float= 0, cap: int= 50000):
+    def eigenalgo(self, version: str = "Givens", accuracy: float= 0, cap: int= 50000):
         verify_accuracy = np.ones((self.N, self.N), dtype=bool) ^ np.eye(self.N, dtype=bool)
-        j = 0
-        if version == 0:
+        j, temps = 0, 0
+        if version == "Gram-Schmidt":
             temps = time()
             while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
                 j += 1
                 q, r = self.gram_schmidt_qr()
                 self.vap, self.vep = r @ q, self.vep @ q
 
-        elif version == 1:
+        elif version == "Givens":
             temps = time()
             while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
                 j += 1
                 q, r = self.givens_qr()
                 self.vap, self.vep = r @ q, self.vep @ q
+
+        elif version == "Rayleigh":
+            temps = time()
+            for i in range(self.N):
+                vec = np.zeros(self.N)  # "vecteur d'essai" des itérations de quotients de Rayleigh
+                vec[i] = 1
+                
+
+        else:
+            print("Please select an appropriate value of the version parameter")
 
         temps = time() - temps
         return self.vap, self.vep, j, temps
