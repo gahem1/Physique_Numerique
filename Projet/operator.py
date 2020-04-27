@@ -31,9 +31,9 @@ class Operator:
         else:
             self.matrix = prev_matrix[:dim, :dim]
 
-        self.vap = self.matrix
+        self.vap = np.copy(self.matrix)
 
-    def algo_qr(self):
+    def gram_schmidt_qr(self):
         q, r = np.zeros((self.N, self.N)), np.zeros((self.N, self.N))
         u = np.copy(self.vap[:, 0])
         r[0, 0] = np.sqrt(sum(u * u))
@@ -47,14 +47,37 @@ class Operator:
 
         return q, r
 
-    def algo_eigen(self, accuracy: float= 0, cap: int= 50000):
+    def givens_qr(self):
+        q, r = np.eye(self.N), np.copy(self.vap)
+        for j in range(self.N - 1):
+            val = r[0, j]
+            for i in range(self.N - 1, j, -1):
+                if self.vap[i, j] != 0:
+                    rot, norm = np.eye(self.N), np.sqrt(val * val + r[i, j] * r[i, j])
+                    rot[i, i] = val / norm
+                    rot[j, j] = rot[i, i]
+                    rot[i, j] = r[i, j] / norm
+                    rot[j, i] = -rot[i, j]
+                    q, r = rot @ q, rot @ r
+
+        return q.T, r
+
+    def eigenalgo(self, version: int = 1, accuracy: float= 0, cap: int= 50000):
         verify_accuracy = np.ones((self.N, self.N), dtype=bool) ^ np.eye(self.N, dtype=bool)
         j = 0
-        temps = time()
-        while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
-            j += 1
-            q, r = self.algo_qr()
-            self.vap, self.vep = r @ q, self.vep @ q
+        if version == 0:
+            temps = time()
+            while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
+                j += 1
+                q, r = self.gram_schmidt_qr()
+                self.vap, self.vep = r @ q, self.vep @ q
+
+        elif version == 1:
+            temps = time()
+            while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
+                j += 1
+                q, r = self.givens_qr()
+                self.vap, self.vep = r @ q, self.vep @ q
 
         temps = time() - temps
         return self.vap, self.vep, j, temps
