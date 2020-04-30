@@ -62,10 +62,15 @@ class Operator:
 
         return q.T, r
 
+    def rayleigh_iteration(self, vap, vep):
+
+
+        return nvap, nvep, diff
+
     def eigenalgo(self, version: str = "Givens", accuracy: float= 0, cap: int= 50000):
-        verify_accuracy = np.ones((self.N, self.N), dtype=bool) ^ np.eye(self.N, dtype=bool)
         j, temps = 0, 0
         if version == "Gram-Schmidt":
+            verify_accuracy = np.ones((self.N, self.N), dtype=bool) ^ np.eye(self.N, dtype=bool)
             temps = time()
             while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
                 j += 1
@@ -73,6 +78,7 @@ class Operator:
                 self.vap, self.vep = r @ q, self.vep @ q
 
         elif version == "Givens":
+            verify_accuracy = np.ones((self.N, self.N), dtype=bool) ^ np.eye(self.N, dtype=bool)
             temps = time()
             while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
                 j += 1
@@ -80,10 +86,11 @@ class Operator:
                 self.vap, self.vep = r @ q, self.vep @ q
 
         elif version == "Rayleigh":
+            vap_guess, vep_guess, not_sing, diff = np.arange(0.5, self.N + 0.5), np.eye(self.N), True, accuracy + 1
             temps = time()
-            for i in range(self.N):
-                vec = np.zeros(self.N)  # "vecteur d'essai" des itérations de quotients de Rayleigh
-                vec[i] = 1
+            while diff > accuracy and j < cap and not_sing:
+                j += 1
+                vap_guess, vep_guess, diff = self.rayleigh_iteration(vap_guess, vep_guess)
                 
 
         else:
