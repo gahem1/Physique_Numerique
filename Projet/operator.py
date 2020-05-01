@@ -63,19 +63,28 @@ class Operator:
         return q.T, r
 
     def rayleigh_iteration(self, vap, vep):
-        nvap, nvep = np.zeros(self.N), np.zeros((self.N, self.N))
+        nvap, nvep, nsing = np.zeros(self.N), np.zeros((self.N, self.N)), True
         for i in range(self.N):
-            nvep[:, i] = np.linalg.inv(self.matrix - vap[i] * np.eye(self.N)) @ vep[:, i]
-            nvep[:, i] = nvep[:, i] / np.sum(nvep[:, i] * nvep[:, i])
+            nmat = np.linalg.inv(self.matrix - vap[i] * np.eye(self.N))
+            if np.linalg.det(nmat) != 0:
+                nvep[:, i] = nmat @ vep[:, i]
+                nvep[:, i] = nvep[:, i] / np.sum(nvep[:, i] * nvep[:, i])
+
+            else:
+                nsing = False
+                break
 
         nvap = np.sum(nvep * (self.matrix @ nvep))
         diff = np.max(abs(nvap - vap))
-        return nvap, nvep, diff
+        return nvap, nvep, diff, nsing
 
     def eigenalgo(self, version: str = "Givens", accuracy: float= 0, cap: int= 50000):
-        j, temps = 0, 0
+        """
+        Uses desired algorithm to find eigenvalues and eigenvectors of Operator object's matrix
+        Returns eigenvalues, eigenvectors, error, number of iterations, and duration in this order
+        """
+        j, temps, verify_accuracy = 0, 0, np.ones((self.N, self.N), dtype=bool) ^ np.eye(self.N, dtype=bool)
         if version == "Gram-Schmidt":
-            verify_accuracy = np.ones((self.N, self.N), dtype=bool) ^ np.eye(self.N, dtype=bool)
             temps = time()
             while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
                 j += 1
@@ -83,7 +92,6 @@ class Operator:
                 self.vap, self.vep = r @ q, self.vep @ q
 
         elif version == "Givens":
-            verify_accuracy = np.ones((self.N, self.N), dtype=bool) ^ np.eye(self.N, dtype=bool)
             temps = time()
             while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
                 j += 1
@@ -95,14 +103,19 @@ class Operator:
             temps = time()
             while diff > accuracy and j < cap and not_sing:
                 j += 1
-                vap_guess, vep_guess, diff = self.rayleigh_iteration(vap_guess, vep_guess)
-
+                vap_guess, vep_guess, diff, not_sing = self.rayleigh_iteration(vap_guess, vep_guess)
+            temps = time() - temps
+            if not_sing:
+                return vap_guess, vep_guess, diff, j, temps
+            else:
+                return vap_guess, vep_guess, diff, j - 1, temps
 
         else:
-            print("Please select an appropriate value of the version parameter")
+            print("Please select an appropriate value for the version parameter")
 
         temps = time() - temps
-        return self.vap, self.vep, j, temps
+        diff = np.max(abs(self.vap[verify_accuracy]))
+        return self.vap, self.vep, diff, j, temps
 
 
 if __name__ == '__main__':
