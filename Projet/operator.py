@@ -74,7 +74,7 @@ class Operator:
                 nsing = False
                 break
 
-        nvap = np.sum(nvep * (self.matrix @ nvep))
+        nvap = np.sum(nvep * (self.matrix @ nvep), axis=)
         diff = np.max(abs(nvap - vap))
         return nvap, nvep, diff, nsing
 
@@ -100,6 +100,7 @@ class Operator:
 
         elif version == "Rayleigh":
             vap_guess, vep_guess, not_sing, diff = np.arange(0.5, self.N + 0.5), np.eye(self.N), True, accuracy + 1
+            print(vap_guess)
             temps = time()
             while diff > accuracy and j < cap and not_sing:
                 j += 1
@@ -108,7 +109,7 @@ class Operator:
             if not_sing:
                 return vap_guess, vep_guess, diff, j, temps
             else:
-                return vap_guess, vep_guess, diff, j - 1, temps
+                return vap_guess, vep_guess, 0, j - 1, temps
 
         else:
             print("Please select an appropriate value for the version parameter")
@@ -120,3 +121,10 @@ class Operator:
 
 if __name__ == '__main__':
 
+    pptest3 = Operator(6, 0.01, 0)
+    vap3, vep3, diff3, j3, temps3 = pptest3.eigenalgo("Rayleigh", 1 * 10 ** -5)
+    print(vap3)
+    print(vep3)
+    print(diff3)
+    print(j3)
+    print(temps3)
