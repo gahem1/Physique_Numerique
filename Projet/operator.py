@@ -63,8 +63,13 @@ class Operator:
         return q.T, r
 
     def rayleigh_iteration(self, vap, vep):
+        nvap, nvep = np.zeros(self.N), np.zeros((self.N, self.N))
+        for i in range(self.N):
+            nvep[:, i] = np.linalg.inv(self.matrix - vap[i] * np.eye(self.N)) @ vep[:, i]
+            nvep[:, i] = nvep[:, i] / np.sum(nvep[:, i] * nvep[:, i])
 
-
+        nvap = np.sum(nvep * (self.matrix @ nvep))
+        diff = np.max(abs(nvap - vap))
         return nvap, nvep, diff
 
     def eigenalgo(self, version: str = "Givens", accuracy: float= 0, cap: int= 50000):
@@ -91,7 +96,7 @@ class Operator:
             while diff > accuracy and j < cap and not_sing:
                 j += 1
                 vap_guess, vep_guess, diff = self.rayleigh_iteration(vap_guess, vep_guess)
-                
+
 
         else:
             print("Please select an appropriate value of the version parameter")
