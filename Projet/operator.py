@@ -59,7 +59,6 @@ class Operator:
                     rot[i, j] = r[i, j] / norm
                     rot[j, self.N - 1] = -rot[i, j]
                     q, r = rot @ q, rot @ r
-        print(r)
         return q.T, r
 
     def rayleigh_iteration(self, vap, vep):
@@ -78,7 +77,7 @@ class Operator:
         diff = np.max(abs(nvap - vap))
         return nvap, vep, diff, nsing
 
-    def eigenalgo(self, version: str = "Givens", accuracy: float= 0, cap: int= 50000):
+    def eigenalgo(self, version: str = "Rayleigh", accuracy: float= 0, cap: int= 50000):
         """
         Uses the desired algorithm to find eigenvalues and eigenvectors of Operator object's matrix
         Returns eigenvalues, eigenvectors, error, number of iterations, and duration in this order
@@ -91,14 +90,14 @@ class Operator:
                 q, r = self.gram_schmidt_qr()
                 self.vap, self.vep = r @ q, self.vep @ q
 
-        elif version == "Givens":
+        elif version == "Givens":  # Warning: Givens rotations algorithm does not appear to work properly
             temps = time()
             while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
                 j += 1
                 q, r = self.givens_qr()
                 self.vap, self.vep = r @ q, self.vep @ q
 
-        elif version == "Rayleigh":  # Note: Rayleigh quotient iteration won't give all eigenvalues & eigenvectors
+        elif version == "Rayleigh":
             vap_guess, vep_guess, not_sing, diff = np.arange(0.5, self.N + 0.5), np.eye(self.N), True, accuracy + 1
             temps = time()
             while diff > accuracy and j < cap and not_sing:
@@ -116,14 +115,4 @@ class Operator:
 
         temps = time() - temps
         diff = np.max(abs(self.vap[verify_accuracy]))
-        return self.vap, self.vep, diff, j, temps
-
-
-if __name__ == '__main__':
-    pptest3 = Operator(6, 0.1, 0.1)
-    vap3, vep3, diff3, j3, temps3 = pptest3.eigenalgo("Givens", 10 ** -10, 1)
-    print(vap3)
-    print(vep3)
-    print(diff3)
-    print(j3)
-    print(temps3)
+        return np.diag(self.vap), self.vep, diff, j, temps
