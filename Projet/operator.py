@@ -49,17 +49,17 @@ class Operator:
 
     def givens_qr(self):
         q, r = np.eye(self.N), np.copy(self.vap)
-        for j in range(self.N - 1):
-            val = r[0, j]
+        for j in range(self.N):
+            val = r[j, j]
             for i in range(self.N - 1, j, -1):
-                if self.vap[i, j] != 0:
+                if r[i, j] != 0:
                     rot, norm = np.eye(self.N), np.sqrt(val * val + r[i, j] * r[i, j])
-                    rot[i, i] = val / norm
-                    rot[j, j] = rot[i, i]
+                    rot[j, j] = val / norm
+                    rot[i, self.N - 1] = rot[0, j]
                     rot[i, j] = r[i, j] / norm
-                    rot[j, i] = -rot[i, j]
+                    rot[j, self.N - 1] = -rot[i, j]
                     q, r = rot @ q, rot @ r
-
+        print(r)
         return q.T, r
 
     def rayleigh_iteration(self, vap, vep):
@@ -120,8 +120,8 @@ class Operator:
 
 
 if __name__ == '__main__':
-    pptest3 = Operator(10, 0.1, 0.1)
-    vap3, vep3, diff3, j3, temps3 = pptest3.eigenalgo("Rayleigh", 10 ** -10)
+    pptest3 = Operator(6, 0.1, 0.1)
+    vap3, vep3, diff3, j3, temps3 = pptest3.eigenalgo("Givens", 10 ** -10, 1)
     print(vap3)
     print(vep3)
     print(diff3)
