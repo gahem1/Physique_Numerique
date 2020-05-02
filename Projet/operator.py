@@ -63,24 +63,24 @@ class Operator:
         return q.T, r
 
     def rayleigh_iteration(self, vap, vep):
-        nvap, nvep, nsing = np.zeros(self.N), np.zeros((self.N, self.N)), True
+        nvap, nsing = vap, True
         for i in range(self.N):
-            nmat = np.linalg.inv(self.matrix - vap[i] * np.eye(self.N))
+            nmat = self.matrix - nvap[i] * np.eye(self.N)
             if np.linalg.det(nmat) != 0:
-                nvep[:, i] = nmat @ vep[:, i]
-                nvep[:, i] = nvep[:, i] / np.sum(nvep[:, i] * nvep[:, i])
-
+                vep[:, i] = np.linalg.inv(nmat) @ vep[:, i]
+                vep[:, i] = vep[:, i] / np.sqrt(np.sum(vep[:, i] * vep[:, i]))
             else:
                 nsing = False
                 break
 
-        nvap = np.sum(nvep * (self.matrix @ nvep), axis=)
+            nvap = np.sum(vep * (self.matrix @ vep), axis=0)
+
         diff = np.max(abs(nvap - vap))
-        return nvap, nvep, diff, nsing
+        return nvap, vep, diff, nsing
 
     def eigenalgo(self, version: str = "Givens", accuracy: float= 0, cap: int= 50000):
         """
-        Uses desired algorithm to find eigenvalues and eigenvectors of Operator object's matrix
+        Uses the desired algorithm to find eigenvalues and eigenvectors of Operator object's matrix
         Returns eigenvalues, eigenvectors, error, number of iterations, and duration in this order
         """
         j, temps, verify_accuracy = 0, 0, np.ones((self.N, self.N), dtype=bool) ^ np.eye(self.N, dtype=bool)
@@ -98,13 +98,13 @@ class Operator:
                 q, r = self.givens_qr()
                 self.vap, self.vep = r @ q, self.vep @ q
 
-        elif version == "Rayleigh":
+        elif version == "Rayleigh":  # Note: Rayleigh quotient iteration won't give all eigenvalues & eigenvectors
             vap_guess, vep_guess, not_sing, diff = np.arange(0.5, self.N + 0.5), np.eye(self.N), True, accuracy + 1
-            print(vap_guess)
             temps = time()
             while diff > accuracy and j < cap and not_sing:
                 j += 1
                 vap_guess, vep_guess, diff, not_sing = self.rayleigh_iteration(vap_guess, vep_guess)
+
             temps = time() - temps
             if not_sing:
                 return vap_guess, vep_guess, diff, j, temps
@@ -120,9 +120,8 @@ class Operator:
 
 
 if __name__ == '__main__':
-
-    pptest3 = Operator(6, 0.01, 0)
-    vap3, vep3, diff3, j3, temps3 = pptest3.eigenalgo("Rayleigh", 1 * 10 ** -5)
+    pptest3 = Operator(10, 0.1, 0.1)
+    vap3, vep3, diff3, j3, temps3 = pptest3.eigenalgo("Rayleigh", 10 ** -10)
     print(vap3)
     print(vep3)
     print(diff3)
