@@ -4,7 +4,7 @@ from time import time
 
 class Operator:
     def __init__(self, dim: int, alpha: float, beta: float, prev_matrix: np.ndarray = None):
-        self.N, self.vep, self.calc = dim, np.eye(dim), np.ones(self.N, dtype=bool)
+        self.N, self.vep, self.calc = dim, np.eye(dim), np.ones(dim, dtype=bool)
         if prev_matrix is None:
             self.matrix = np.zeros((dim, dim))
 
@@ -47,8 +47,23 @@ class Operator:
 
         return q, r
 
+    def givens_qr(self):
+        q, r = np.eye(self.N), np.copy(self.vap)
+        for j in range(self.N - 1):
+            for i in range(self.N - 1, j, -1):
+                if self.vap[i, j] != 0:
+                    val, rot = r[j, j], np.eye(self.N)
+                    norm = np.sqrt(val * val + r[i, j] * r[i, j])
+                    rot[j, j] = val / norm
+                    rot[i, i] = rot[j, j]
+                    rot[j, i] = r[i, j] / norm
+                    rot[i, j] = -rot[j, i]
+                    q, r = rot @ q, rot @ r
+
+        return q.T, r
+
     def rayleigh_iteration(self, vap, vep):
-        nvap, nsing, breaker = vap, True, 0
+        nvap, nsing = vap, True
         for i in np.arange(self.N)[self.calc]:
             nmat = self.matrix - nvap[i] * np.eye(self.N)
             if np.linalg.det(nmat) != 0:
@@ -64,7 +79,10 @@ class Operator:
 
         return nvap, vep, diff, nsing
 
-    def eigenalgo(self, accuracy: float = 0, cap: int = 50000, version: str = "Rayleigh"):
+    def inverse_power_iteration(self, vap, vep):
+        nvap = v
+
+    def eigenalgo(self, accuracy: float = 0, cap: int = 50000, version: str = "Givens"):
         """
         Uses the desired algorithm to find eigenvalues and eigenvectors of Operator object's matrix
         Returns eigenvalues, eigenvectors, error, number of iterations, and duration in this order
@@ -77,7 +95,15 @@ class Operator:
                 q, r = self.gram_schmidt_qr()
                 self.vap, self.vep = r @ q, self.vep @ q
 
-        elif version == "Rayleigh":  # Note: Rayleigh
+        elif version == "Givens":
+            verify_accuracy = np.ones((self.N, self.N), dtype=bool) ^ np.eye(self.N, dtype=bool)
+            temps = time()
+            while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
+                j += 1
+                q, r = self.givens_qr()
+                self.vap, self.vep = r @ q, self.vep @ q
+
+        elif version == "Rayleigh":
             vap_guess, vep_guess, not_sing, diff = np.arange(0.5, self.N + 0.5), np.eye(self.N), True, accuracy + 1
             temps, cont = time(), True
             while cont:
@@ -85,14 +111,15 @@ class Operator:
                     j += 1
                     vap_guess, vep_guess, diff, not_sing = self.rayleigh_iteration(vap_guess, vep_guess)
 
-                cont = False
+                cont, change, checked = False, np.zeros(self.N, dtype=bool), np.empty(self.N)
                 for i in range(self.N):
                     if np.sum(np.equal(vap_guess, vap_guess[i])) != 1:
                         cont = True
-                        vap_guess[vap_guess == vap_guess[i]][1] +=
-
-
-
+                        if any(np.equal(checked, vap_guess[i])):
+                            change[i] = 1
+                        else:
+                            checked[i] = vap_guess[i]
+                        
             temps = time() - temps
             if not_sing:
                 return vap_guess, vep_guess, diff, j, temps
@@ -108,8 +135,10 @@ class Operator:
 
 
 if __name__ == "__main__":
-    pp = Operator(8, 0.01, 0.02)
-    vap, vep, diff, j, temps = pp.eigenalgo(0, 5000)
-    print(vap)
-    print(vep)
-    print(diff)
+    pp = Operator(4, 0.01, 0.02)
+    va, ve, di, gg, te = pp.eigenalgo(10 ** -18, 10000, "Givens")
+    print(va)
+    print(ve)
+    print(di)
+    print(gg)
+    print(te)
