@@ -47,20 +47,6 @@ class Operator:
 
         return q, r
 
-    def givens_qr(self):
-        q, r = np.eye(self.N), np.copy(self.vap)
-        for j in range(self.N):
-            val = r[j, j]
-            for i in range(self.N - 1, j, -1):
-                if r[i, j] != 0:
-                    rot, norm = np.eye(self.N), np.sqrt(val * val + r[i, j] * r[i, j])
-                    rot[j, j] = val / norm
-                    rot[i, self.N - 1] = rot[0, j]
-                    rot[i, j] = r[i, j] / norm
-                    rot[j, self.N - 1] = -rot[i, j]
-                    q, r = rot @ q, rot @ r
-        return q.T, r
-
     def rayleigh_iteration(self, vap, vep):
         nvap, nsing = vap, True
         for i in range(self.N):
@@ -77,7 +63,7 @@ class Operator:
         diff = np.max(abs(nvap - vap))
         return nvap, vep, diff, nsing
 
-    def eigenalgo(self, version: str = "Rayleigh", accuracy: float= 0, cap: int= 50000):
+    def eigenalgo(self, version: str = "Gram-Schmidt", accuracy: float= 0, cap: int= 50000):
         """
         Uses the desired algorithm to find eigenvalues and eigenvectors of Operator object's matrix
         Returns eigenvalues, eigenvectors, error, number of iterations, and duration in this order
@@ -90,14 +76,7 @@ class Operator:
                 q, r = self.gram_schmidt_qr()
                 self.vap, self.vep = r @ q, self.vep @ q
 
-        elif version == "Givens":  # Warning: Givens rotations algorithm does not appear to work properly
-            temps = time()
-            while np.any(abs(self.vap[verify_accuracy]) > accuracy) and j < cap:
-                j += 1
-                q, r = self.givens_qr()
-                self.vap, self.vep = r @ q, self.vep @ q
-
-        elif version == "Rayleigh":
+        elif version == "Rayleigh":  # Note: Rayleigh
             vap_guess, vep_guess, not_sing, diff = np.arange(0.5, self.N + 0.5), np.eye(self.N), True, accuracy + 1
             temps = time()
             while diff > accuracy and j < cap and not_sing:
