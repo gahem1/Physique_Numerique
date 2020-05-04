@@ -63,21 +63,23 @@ class Operator:
         return q.T, r
 
     def rayleigh_iteration(self, vap, vep):
-        nvap, nsing = vap, True
+        nsing, diff = True, 0
         for i in np.arange(self.N)[self.calc]:
-            nmat = self.matrix - nvap[i] * np.eye(self.N)
-            if np.linalg.det(nmat) != 0:
+            nmat = self.matrix - vap[i] * np.eye(self.N)
+            deter = np.linalg.det(nmat)
+            if deter != 0:
                 vep[:, i] = np.linalg.inv(nmat) @ vep[:, i]
                 vep[:, i] = vep[:, i] / np.sqrt(np.sum(vep[:, i] * vep[:, i]))
+                if deter > diff:
+                    diff = deter
             else:
                 self.calc[i] -= 1
 
-        nvap = np.sum(vep * (self.matrix @ vep), axis=0)
-        diff = np.max(abs(nvap - vap))
+        vap = np.sum(vep * (self.matrix @ vep), axis=0)
         if np.sum(self.calc) == 0:
-            nsing = False
+            nsing, diff = False, 0
 
-        return nvap, vep, diff, nsing
+        return vap, vep, diff, nsing
 
     def eigenalgo(self, accuracy: float = 0, cap: int = 50000, version: str = "Givens", param: float = 0, app: int = 0):
         """
@@ -112,10 +114,7 @@ class Operator:
                 vap_guess, vep_guess, diff, not_sing = self.rayleigh_iteration(vap_guess, vep_guess)
 
             temps = time() - temps
-            if not_sing:
-                return vap_guess, vep_guess, diff, j, temps
-            else:
-                return vap_guess, vep_guess, 0, j, temps
+            return vap_guess, vep_guess, diff, j, temps
 
         else:
             print("Please select an appropriate value for the version parameter")
