@@ -70,19 +70,16 @@ class Operator:
                 vep[:, i] = np.linalg.inv(nmat) @ vep[:, i]
                 vep[:, i] = vep[:, i] / np.sqrt(np.sum(vep[:, i] * vep[:, i]))
             else:
-                self.calc[i] += 1
+                self.calc[i] -= 1
 
         nvap = np.sum(vep * (self.matrix @ vep), axis=0)
         diff = np.max(abs(nvap - vap))
-        if np.sum(self.calc) == self.N:
+        if np.sum(self.calc) == 0:
             nsing = False
 
         return nvap, vep, diff, nsing
 
-    def inverse_power_iteration(self, vap, vep):
-        nvap = v
-
-    def eigenalgo(self, accuracy: float = 0, cap: int = 50000, version: str = "Givens"):
+    def eigenalgo(self, accuracy: float = 0, cap: int = 50000, version: str = "Givens", param: float = 0, app: int = 0):
         """
         Uses the desired algorithm to find eigenvalues and eigenvectors of Operator object's matrix
         Returns eigenvalues, eigenvectors, error, number of iterations, and duration in this order
@@ -104,27 +101,21 @@ class Operator:
                 self.vap, self.vep = r @ q, self.vep @ q
 
         elif version == "Rayleigh":
-            vap_guess, vep_guess, not_sing, diff = np.arange(0.5, self.N + 0.5), np.eye(self.N), True, accuracy + 1
-            temps, cont = time(), True
-            while cont:
-                while diff > accuracy and j < cap and not_sing:
-                    j += 1
-                    vap_guess, vep_guess, diff, not_sing = self.rayleigh_iteration(vap_guess, vep_guess)
+            vap_guess, vep_guess, not_sing, diff, j = np.zeros(self.N), np.eye(self.N), True, accuracy + 1, 0
+            if app == 0:
+                vap_guess[int(np.ceil(self.N / 2)):] += param
+            else:
+                vap_guess[app:] += param
+            temps = time()
+            while diff > accuracy and j < cap and not_sing:
+                j += 1
+                vap_guess, vep_guess, diff, not_sing = self.rayleigh_iteration(vap_guess, vep_guess)
 
-                cont, change, checked = False, np.zeros(self.N, dtype=bool), np.empty(self.N)
-                for i in range(self.N):
-                    if np.sum(np.equal(vap_guess, vap_guess[i])) != 1:
-                        cont = True
-                        if any(np.equal(checked, vap_guess[i])):
-                            change[i] = 1
-                        else:
-                            checked[i] = vap_guess[i]
-                        
             temps = time() - temps
             if not_sing:
                 return vap_guess, vep_guess, diff, j, temps
             else:
-                return vap_guess, vep_guess, 0, j - 1, temps
+                return vap_guess, vep_guess, 0, j, temps
 
         else:
             print("Please select an appropriate value for the version parameter")
@@ -135,8 +126,8 @@ class Operator:
 
 
 if __name__ == "__main__":
-    pp = Operator(4, 0.01, 0.02)
-    va, ve, di, gg, te = pp.eigenalgo(10 ** -18, 10000, "Givens")
+    pp = Operator(8, 0.01, 0.01)
+    va, ve, di, gg, te = pp.eigenalgo(10 ** -10, 5000, "Rayleigh", 0)
     print(va)
     print(ve)
     print(di)
