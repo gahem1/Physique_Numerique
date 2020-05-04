@@ -81,7 +81,7 @@ class Operator:
 
         return vap, vep, diff, nsing
 
-    def eigenalgo(self, accuracy: float = 0, cap: int = 50000, version: str = "Givens", param: float = 0, app: int = 0):
+    def eigenalgo(self, accuracy: float = 0, cap: int = 50000, version: str = "Givens"):
         """
         Uses the desired algorithm to find eigenvalues and eigenvectors of Operator object's matrix
         Returns eigenvalues, eigenvectors, error, number of iterations, and duration in this order
@@ -103,15 +103,22 @@ class Operator:
                 self.vap, self.vep = r @ q, self.vep @ q
 
         elif version == "Rayleigh":
-            vap_guess, vep_guess, not_sing, diff, j = np.zeros(self.N), np.eye(self.N), True, accuracy + 1, 0
-            if app == 0:
-                vap_guess[int(np.ceil(self.N / 2)):] += param
-            else:
-                vap_guess[app:] += param
-            temps = time()
-            while diff > accuracy and j < cap and not_sing:
-                j += 1
-                vap_guess, vep_guess, diff, not_sing = self.rayleigh_iteration(vap_guess, vep_guess)
+            vap_guess, vep_guess, not_sing, diff = np.arange(0.5, self.N + 0.5), np.eye(self.N), True, accuracy + 1
+            cond, j, memorize, temps = True, 0, np.zeros(self.N), time()
+            while cond:  # Stop condition, all eigenvalues must be different
+                while diff > accuracy and j < cap and not_sing:
+                    j += 1
+                    vap_guess, vep_guess, diff, not_sing = self.rayleigh_iteration(vap_guess, vep_guess)
+
+                self.calc, cond, first = np.zeros(self.N, dtype=bool), 0, True
+                for i in range(self.N):
+                    if np.sum(np.less(np.abs(vap_guess - vap_guess[i]), 10 ** -6)) != 1:
+                        vap_guess[i + 1:] += 1 + memorize[i]
+                        self.calc[i + 1:] = 1
+                        cond = 1
+                        if first:
+                            memorize[i] += 1
+                            first = False
 
             temps = time() - temps
             return vap_guess, vep_guess, diff, j, temps
@@ -125,8 +132,8 @@ class Operator:
 
 
 if __name__ == "__main__":
-    pp = Operator(8, 0.01, 0.01)
-    va, ve, di, gg, te = pp.eigenalgo(10 ** -10, 5000, "Rayleigh", 0)
+    test = Operator(8, 0.01, 0.01)
+    va, ve, di, gg, te = test.eigenalgo(10 ** -11, 10000, "Rayleigh")
     print(va)
     print(ve)
     print(di)
