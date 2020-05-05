@@ -73,7 +73,7 @@ class Operator:
                 self.calc[i] -= 1
 
         nvap = np.sum(vep * (self.matrix @ vep), axis=0)
-        diff = np.sum(np.abs(nvap - vap))
+        diff = np.max(np.abs(nvap - vap))
         if np.sum(self.calc) == 0:
             nsing, diff = False, 0
 

@@ -2,4 +2,6 @@ from hamiltonian import *
 import matplotlib.pyplot as plt
 
 
-gram = Operator()
+gramtime = np.empty(20)
+
+
