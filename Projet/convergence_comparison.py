@@ -1,3 +1,3 @@
-from operator import *
+from hamiltonian import *
 import matplotlib.pyplot as plt
 

@@ -104,21 +104,24 @@ class Operator:
 
         elif version == "Rayleigh":
             vap_guess, vep_guess, not_sing, diff = np.arange(0.5, self.N + 0.5), np.eye(self.N), True, accuracy + 1
-            cond, j, memorize, temps = True, 0, np.zeros(self.N), time()
+            cond, j, memorize, keep, temps = True, 0, np.zeros(self.N), 0, time()
             while cond:  # Stop condition, all eigenvalues must be different
-                while diff > accuracy and j < cap and not_sing:
+                while keep < 15 and j < cap and not_sing:
                     j += 1
                     vap_guess, vep_guess, diff, not_sing = self.rayleigh_iteration(vap_guess, vep_guess)
+                    if diff > accuracy:
+                        keep += 1
 
-                self.calc, cond, first = np.zeros(self.N, dtype=bool), 0, True
+                self.calc, cond, first = np.zeros(self.N, dtype=bool), False, True
                 for i in range(self.N):
                     if np.sum(np.less(np.abs(vap_guess - vap_guess[i]), 10 ** -6)) != 1:
                         vap_guess[i + 1:] += 1 + memorize[i]
-                        self.calc[i + 1:] = 1
-                        cond = 1
                         if first:
                             memorize[i] += 1
+                            vep_guess[i + 1:, i + 1:] = np.eye(self.N - i - 1)
                             first = False
+                            cond = True
+                            self.calc[i + 1:] = 1
 
             temps = time() - temps
             return vap_guess, vep_guess, diff, j, temps
@@ -135,7 +138,4 @@ if __name__ == "__main__":
     test = Operator(8, 0.01, 0.01)
     va, ve, di, gg, te = test.eigenalgo(10 ** -11, 10000, "Rayleigh")
     print(va)
-    print(ve)
-    print(di)
-    print(gg)
-    print(te)
+    print(np.sum(ve[:, 6] * ve[:, 6], axis=0))
