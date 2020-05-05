@@ -25,4 +25,3 @@ va, ve, di, gg, te = test.eigenalgo(10 ** -14, 20000, "Rayleigh")
 for i in range(a):
     print(np.sum(np.tile(ve[:, i], (a, 1)).T * ve, axis=0))
 print(np.abs(ve @ np.diag(va) - test.matrix @ ve))
-

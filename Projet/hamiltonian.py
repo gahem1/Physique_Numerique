@@ -105,7 +105,7 @@ class Operator:
 
         elif version == "Rayleigh":
             vap_guess, vep_guess, not_sing, diff = np.arange(0.5, self.N + 0.5), np.eye(self.N), True, accuracy + 1
-            cond, j, memorize, temps, self.calc = True, 0, np.zeros(self.N), np.ones(self.N, dtype=bool), time()
+            cond, j, memorize, self.calc, temps = True, 0, np.zeros(self.N), np.ones(self.N, dtype=bool), time()
             while cond:  # Stop condition, all eigenvalues must be different
                 while diff > accuracy and j < cap and not_sing:
                     j += 1

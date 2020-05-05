@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 gramj, givensj, rayleighj = np.empty(15), np.empty(15), np.empty(15)
 gramt, givenst, rayleight = np.empty(15), np.empty(15), np.empty(15)
-acc, alpha, beta, naxis = 10 ** -12, 0.08, 0.04, np.arange(20, 5, -1)
+acc, alpha, beta, naxis = 10 ** -10, 0.08, 0.04, np.arange(20, 5, -1)
 
 test = Operator(20, alpha, beta)
 for i in range(6, 21):
