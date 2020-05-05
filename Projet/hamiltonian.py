@@ -66,20 +66,21 @@ class Operator:
         nsing, diff = True, 0
         for i in np.arange(self.N)[self.calc]:
             nmat = self.matrix - vap[i] * np.eye(self.N)
-            deter = np.linalg.det(nmat)
-            if deter != 0:
+            if np.linalg.det(nmat) != 0:
                 vep[:, i] = np.linalg.inv(nmat) @ vep[:, i]
                 vep[:, i] = vep[:, i] / np.sqrt(np.sum(vep[:, i] * vep[:, i]))
-                if deter > diff:
-                    diff = deter
             else:
                 self.calc[i] -= 1
 
-        vap = np.sum(vep * (self.matrix @ vep), axis=0)
+        nvap = np.sum(vep * (self.matrix @ vep), axis=0)
+        diff = np.sum(np.abs(nvap - vap))
         if np.sum(self.calc) == 0:
             nsing, diff = False, 0
 
-        return vap, vep, diff, nsing
+        return nvap, vep, diff, nsing
+
+    def reset_vap_vep(self):
+        self.vap, self.vep = np.copy(self.matrix), np.eye(self.N)
 
     def eigenalgo(self, accuracy: float = 0, cap: int = 50000, version: str = "Givens"):
         """
@@ -104,23 +105,20 @@ class Operator:
 
         elif version == "Rayleigh":
             vap_guess, vep_guess, not_sing, diff = np.arange(0.5, self.N + 0.5), np.eye(self.N), True, accuracy + 1
-            cond, j, memorize, keep, temps = True, 0, np.zeros(self.N), 0, time()
+            cond, j, memorize, temps = True, 0, np.zeros(self.N), time()
             while cond:  # Stop condition, all eigenvalues must be different
-                while keep < 20 and j < cap and not_sing:
+                while diff > accuracy and j < cap and not_sing:
                     j += 1
                     vap_guess, vep_guess, diff, not_sing = self.rayleigh_iteration(vap_guess, vep_guess)
-                    if diff > accuracy:
-                        keep += 1
 
-                self.calc, cond, first, not_sing, keep = np.zeros(self.N, dtype=bool), False, True, True, 0
+                self.calc, cond, first, not_sing = np.zeros(self.N, dtype=bool), False, True, True
                 for i in range(self.N):
                     if np.sum(np.less(np.abs(vap_guess - vap_guess[i]), 10 ** -6)) != 1:
                         vap_guess[i + 1:] += 1 + memorize[i]
                         if first:
                             memorize[i] += 1
                             vep_guess[i + 1:, i + 1:] = np.eye(self.N - i - 1)
-                            first = False
-                            cond = True
+                            first, cond, diff = False, True, accuracy + 1
                             self.calc[i + 1:] = 1
 
             temps = time() - temps
@@ -135,8 +133,24 @@ class Operator:
 
 
 if __name__ == "__main__":
-    test = Operator(8, 0.01, 0.01)
-    va, ve, di, gg, te = test.eigenalgo(10 ** -11, 10000, "Rayleigh")
+    test = Operator(10, 0.01, 0.01)
+    va, ve, di, gg, te = test.eigenalgo(10 ** -14, 10000, "Gram-Schmidt")
+    print("Gram-Schmidt")
     print(va)
-    print(np.sum((test.matrix @ ve[:, 5]) * ve[:, 5]))
-    print(np.sum(ve[:, 5] * ve[:, 6], axis=0))
+    print("Diff = {}".format(di))
+    print("j = {}".format(gg))
+    print("Temps = {}".format(te))
+    test = Operator(10, 0.01, 0.01)
+    va, ve, di, gg, te = test.eigenalgo(10 ** -14, 10000, "Givens")
+    print("Givens")
+    print(va)
+    print("Diff = {}".format(di))
+    print("j = {}".format(gg))
+    print("Temps = {}".format(te))
+    test = Operator(10, 0.01, 0.01)
+    va, ve, di, gg, te = test.eigenalgo(10 ** -14, 10000, "Rayleigh")
+    print("Rayleigh")
+    print(va)
+    print("Diff = {}".format(di))
+    print("j = {}".format(gg))
+    print("Temps = {}".format(te))
