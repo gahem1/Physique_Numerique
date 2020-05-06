@@ -111,14 +111,15 @@ class Operator:
                 while diff > accuracy and j < cap and not_sing:
                     j += 1
                     self.rvap, self.vep, diff, not_sing = self.rayleigh_iteration(self.rvap, self.vep)
+
                 cond = False
-                if not_skip:
+                if j < cap:
                     self.calc, first, not_sing = np.zeros(self.N, dtype=bool), True, True
                     for i in range(self.N):
                         if np.sum(np.less(np.abs(self.rvap - self.rvap[i]), 10 ** -6)) != 1:
                             self.rvap[i + 1:] += self.memorize[i]
                             if first:
-                                self.memorize[i] += 1
+                                self.memorize[i] += 0.5
                                 self.vep[i + 1:, i + 1:] = np.eye(self.N - i - 1)
                                 first, cond, diff = False, True, accuracy + 1
                                 self.calc[i + 1:] = 1
