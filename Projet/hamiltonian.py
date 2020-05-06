@@ -4,7 +4,7 @@ from time import time
 
 class Operator:
     def __init__(self, dim: int, alpha: float, beta: float, prev_matrix: np.ndarray = None):
-        self.N, self.vep, self.calc = dim, np.eye(dim), np.ones(dim, dtype=bool)
+        self.N, self.vep, self.calc, self.memorize = dim, np.eye(dim), np.ones(dim, dtype=bool), np.zeros(dim)
         if prev_matrix is None:
             self.matrix = np.zeros((dim, dim))
 
@@ -31,7 +31,7 @@ class Operator:
         else:
             self.matrix = prev_matrix[:dim, :dim]
 
-        self.vap = np.copy(self.matrix)
+        self.vap, self.rvap = np.copy(self.matrix), np.arange(0.5, dim + 0.5)
 
     def gram_schmidt_qr(self):
         q, r = np.zeros((self.N, self.N)), np.zeros((self.N, self.N))
@@ -80,9 +80,10 @@ class Operator:
         return nvap, vep, diff, nsing
 
     def reset_vap_vep(self):
-        self.vap, self.vep = np.copy(self.matrix), np.eye(self.N)
+        self.vap, self.vep, self.calc = np.copy(self.matrix), np.eye(self.N), np.ones(self.N, dtype=bool)
+        self.rvap = np.arange(0.5, self.N + 0.5)
 
-    def eigenalgo(self, accuracy: float = 0, cap: int = 50000, version: str = "Givens"):
+    def eigenalgo(self, accuracy: float = 0, cap: int = 50000, version: str = "Givens", not_skip: bool = True):
         """
         Uses the desired algorithm to find eigenvalues and eigenvectors of Operator object's matrix
         Returns eigenvalues, eigenvectors, error, number of iterations, and duration in this order
@@ -104,25 +105,26 @@ class Operator:
                 self.vap, self.vep = r @ q, self.vep @ q
 
         elif version == "Rayleigh":
-            vap_guess, vep_guess, not_sing, diff = np.arange(0.5, self.N + 0.5), np.eye(self.N), True, accuracy + 1
-            cond, j, memorize, self.calc, temps = True, 0, np.zeros(self.N), np.ones(self.N, dtype=bool), time()
+            not_sing, diff, cond, j = True, accuracy + 1, True, 0
+            temps = time()
             while cond:  # Stop condition, all eigenvalues must be different
                 while diff > accuracy and j < cap and not_sing:
                     j += 1
-                    vap_guess, vep_guess, diff, not_sing = self.rayleigh_iteration(vap_guess, vep_guess)
+                    self.rvap, self.vep, diff, not_sing = self.rayleigh_iteration(self.rvap, self.vep)
 
-                self.calc, cond, first, not_sing = np.zeros(self.N, dtype=bool), False, True, True
-                for i in range(self.N):
-                    if np.sum(np.less(np.abs(vap_guess - vap_guess[i]), 10 ** -6)) != 1:
-                        vap_guess[i + 1:] += 1 + memorize[i]
-                        if first:
-                            memorize[i] += 1
-                            vep_guess[i + 1:, i + 1:] = np.eye(self.N - i - 1)
-                            first, cond, diff = False, True, accuracy + 1
-                            self.calc[i + 1:] = 1
-
+                cond = False
+                if j < cap:
+                    self.calc, first, not_sing = np.zeros(self.N, dtype=bool), True, True
+                    for i in range(self.N):
+                        if np.sum(np.less(np.abs(self.rvap - self.rvap[i]), 10 ** -6)) != 1:
+                            self.rvap[i + 1:] += self.memorize[i]
+                            if first:
+                                self.memorize[i] += 0.5
+                                self.vep[i + 1:, i + 1:] = np.eye(self.N - i - 1)
+                                first, cond, diff = False, True, accuracy + 1
+                                self.calc[i + 1:] = 1
             temps = time() - temps
-            return vap_guess, vep_guess, diff, j, temps
+            return self.rvap, self.vep, diff, j, temps
 
         else:
             print("Please select an appropriate value for the version parameter")
