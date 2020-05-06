@@ -105,6 +105,6 @@ class Perturbation:
             for j in range(self.N):
                 if i != j:
                     states[i, j] = self.P[i, j] / (j - i)
-                    states[i, j] += vector_elements
+                    states[i, j] += vector_elements[i, j] / (j - i)
 
         return self.coeff ** 2 * states
