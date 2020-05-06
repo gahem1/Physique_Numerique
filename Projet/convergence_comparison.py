@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 gramj, givensj, rayleighj = np.empty(15), np.empty(15), np.empty(15)
 gramt, givenst, rayleight = np.empty(15), np.empty(15), np.empty(15)
-acc, alpha, beta, naxis = 10 ** -10, 0.06, 0.03, np.arange(20, 5, -1)
+acc, alpha, beta, naxis = 10 ** -10, 0.002, 0.001, np.arange(20, 5, -1)
 
 test = Operator(20, alpha, beta)
 for i in range(15):
@@ -12,7 +12,7 @@ for i in range(15):
     test.reset_vap_vep()
     va, ve, di, givensj[i], givenst[i] = test.eigenalgo(acc, 99999999999, "Givens")
     test.reset_vap_vep()
-    va, ve, di, rayleighj[i], rayleight[i] = test.eigenalgo(acc, 99999999999, "Rayleigh", False)
+    va, ve, di, rayleighj[i], rayleight[i] = test.eigenalgo(acc, 99999999999, "Rayleigh")
     test = Operator(test.N - 1, alpha, beta, test.matrix[:-1, :-1])
 
 jaxis, gramd1, givensd1, rayleighd1 = np.arange(10000), np.empty(10000), np.empty(10000), np.empty(10000)
@@ -25,7 +25,7 @@ for i in range(10000):
     va, ve, rayleighd1[i], gg, te = t3.eigenalgo(0, 1, "Rayleigh")
     va, ve, gramd2[i], gg, te = t4.eigenalgo(0, 1, "Gram-Schmidt")
     va, ve, givensd2[i], gg, te = t5.eigenalgo(0, 1, "Givens")
-    va, ve, rayleighd2[i], gg, te = t6.eigenalgo(0, 1, "Rayleigh", False)
+    va, ve, rayleighd2[i], gg, te = t6.eigenalgo(0, 1, "Rayleigh")
 
 print(rayleighd1[:50])
 
