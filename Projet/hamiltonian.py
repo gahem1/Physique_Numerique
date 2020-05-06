@@ -118,7 +118,7 @@ class Operator:
                         if np.sum(np.less(np.abs(self.rvap - self.rvap[i]), 10 ** -6)) != 1:
                             self.rvap[i + 1:] += self.memorize[i]
                             if first:
-                                self.memorize[i] += 0.01
+                                self.memorize[i] += 1
                                 self.vep[i + 1:, i + 1:] = np.eye(self.N - i - 1)
                                 first, cond, diff = False, True, accuracy + 1
                                 self.calc[i + 1:] = 1

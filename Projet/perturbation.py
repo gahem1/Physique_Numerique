@@ -96,12 +96,15 @@ class Perturbation:
         energies += np.diag(self.P)
         return self.coeff ** 2 * energies
 
-    def second_order_state(self, fos):
+    def second_order_state(self, fos=None):
         states = np.zeros((self.N, self.N))
+        if fos is None:
+            fos = self.first_order_state()
+        vector_elements = self.W @ fos
         for i in range(self.N):
             for j in range(self.N):
                 if i != j:
                     states[i, j] = self.P[i, j] / (j - i)
-                    states[i, j] += self.W @ fos[:, ]
+                    states[i, j] += vector_elements
 
         return self.coeff ** 2 * states
