@@ -28,7 +28,6 @@ for i in range(ran):
     va, ve, givensd2[i], gg, te = t5.eigenalgo(0, 1, "Givens")
     va, ve, rayleighd2[i], gg, te = t6.eigenalgo(0, 1, "Rayleigh")
 
-
 plt.figure()
 plt.plot(naxis, gramj, '*', naxis, givensj, '.', naxis, rayleighj, 'o', markersize=7)
 plt.xlabel("Dimension", fontsize=18)
