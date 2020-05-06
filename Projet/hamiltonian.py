@@ -82,7 +82,7 @@ class Operator:
     def reset_vap_vep(self):
         self.vap, self.vep = np.copy(self.matrix), np.eye(self.N)
 
-    def eigenalgo(self, accuracy: float = 0, cap: int = 50000, version: str = "Givens"):
+    def eigenalgo(self, accuracy: float = 0, cap: int = 50000, version: str = "Givens", not_skip: bool = True):
         """
         Uses the desired algorithm to find eigenvalues and eigenvectors of Operator object's matrix
         Returns eigenvalues, eigenvectors, error, number of iterations, and duration in this order
@@ -110,16 +110,16 @@ class Operator:
                 while diff > accuracy and j < cap and not_sing:
                     j += 1
                     vap_guess, vep_guess, diff, not_sing = self.rayleigh_iteration(vap_guess, vep_guess)
-
-                self.calc, cond, first, not_sing = np.zeros(self.N, dtype=bool), False, True, True
-                for i in range(self.N):
-                    if np.sum(np.less(np.abs(vap_guess - vap_guess[i]), 10 ** -6)) != 1:
-                        vap_guess[i + 1:] += 1 + memorize[i]
-                        if first:
-                            memorize[i] += 1
-                            vep_guess[i + 1:, i + 1:] = np.eye(self.N - i - 1)
-                            first, cond, diff = False, True, accuracy + 1
-                            self.calc[i + 1:] = 1
+                if not_skip:
+                    self.calc, cond, first, not_sing = np.zeros(self.N, dtype=bool), False, True, True
+                    for i in range(self.N):
+                        if np.sum(np.less(np.abs(vap_guess - vap_guess[i]), 10 ** -6)) != 1:
+                            vap_guess[i + 1:] += memorize[i]
+                            if first:
+                                memorize[i] += 0.01
+                                vep_guess[i + 1:, i + 1:] = np.eye(self.N - i - 1)
+                                first, cond, diff = False, True, accuracy + 1
+                                self.calc[i + 1:] = 1
 
             temps = time() - temps
             return vap_guess, vep_guess, diff, j, temps
