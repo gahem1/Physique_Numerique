@@ -1,12 +1,20 @@
 from hamiltonian import *
 from perturbation import Perturbation
+import matplotlib.pyplot as plt
+import seaborn as
 
-test1 = Operator(10, 0, 0.0001)
-test2 = Perturbation(10, 0, 0.0001)
+dim = 10
+num = 200
+va, val = np.empty((num, num, dim)), np.empty((num, num, dim))
 
-va, ve, di, gg, te = test1.eigenalgo(10 ** -14, 50000, "Givens")
-val = test2.first_order_energy() + np.arange(0.5, 10.5)
-vec = test2.first_order_state()
+for i in range(num):
+    for j in range(num):
+        test1 = Operator(dim, i / 2000, j / 2000)
+        test2 = Perturbation(dim, i / 2000, j / 2000)
+        va[i, j, :], ve, di, gg, te = test1.eigenalgo(10 ** -12, 99999, "Givens")
+        val[i, j, :] = test2.second_order_energy() + test2.first_order_energy() + np.arange(0.5, dim + 0.5)
+
+
 
 print(val)
 print(va)
